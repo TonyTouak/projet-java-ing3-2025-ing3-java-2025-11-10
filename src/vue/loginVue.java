@@ -14,7 +14,7 @@ public class loginVue extends JFrame {
         // 🟦 Bande bleue flexible
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 25));
         headerPanel.setBackground(new Color(30, 144, 255));
-        headerPanel.setPreferredSize(new Dimension(0, 80)); // 0 en largeur = s'étend automatiquement
+        headerPanel.setPreferredSize(new Dimension(0, 250)); // 0 en largeur = s'étend automatiquement
 
         JLabel titleLabel = new JLabel("Bienvenue sur ShoppingApp");
         titleLabel.setForeground(Color.WHITE);
