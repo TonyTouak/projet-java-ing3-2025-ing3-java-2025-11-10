@@ -13,6 +13,7 @@ public class magasinVue extends JFrame {
 
 
         JPanel headerPanel = new JPanel();
+
         headerPanel.setBackground(new Color(30, 144, 255));
         headerPanel.setPreferredSize(new Dimension(0, 250));
         headerPanel.setLayout(null);

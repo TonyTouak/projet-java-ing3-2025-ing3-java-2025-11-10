@@ -8,6 +8,7 @@ public class loginVue extends JFrame {
     public loginVue() {
         setTitle("Bienvenue");
         setSize(400, 300);
+
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
