@@ -2,7 +2,7 @@ package modele;
 
 import java.time.LocalDate;
 
-public class Client extends Utilisateur {
+public class Client extends Utilisateur { //test
     protected String prenom;
     protected String adresse;
     protected String telephone;
