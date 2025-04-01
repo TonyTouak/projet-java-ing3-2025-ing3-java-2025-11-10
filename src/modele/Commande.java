@@ -41,4 +41,8 @@ public class Commande {
     public int getQuantite() {
         return quantite;
     }
+
+    public void setId(int anInt) {
+        this.id = anInt;
+    }
 }

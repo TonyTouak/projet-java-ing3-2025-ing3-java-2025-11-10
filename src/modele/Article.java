@@ -48,4 +48,8 @@ public class Article {
         quantiteUnique = quantite % quantiteVrac;
         return (paquet * prixVrac) + (quantiteUnique * prixUnique);
     }
+
+    public void setId(int anInt) {
+        this.id = anInt;
+    }
 }
