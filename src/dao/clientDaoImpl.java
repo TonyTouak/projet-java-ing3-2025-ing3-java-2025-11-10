@@ -14,7 +14,7 @@ public class clientDaoImpl implements clientDao {
     @Override
     public ArrayList<Client> getAll() {
         ArrayList<Client> listeClients = new ArrayList<>();
-        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.id";
+        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.IDUtilisateur";
 
         try (Connection connexion = daoFactory.getConnection();
              Statement statement = connexion.createStatement();
@@ -25,7 +25,7 @@ public class clientDaoImpl implements clientDao {
                 int idClient = resultats.getInt("IDClient");
                 String nom = resultats.getString("nom");
                 String email = resultats.getString("email");
-                String motDePasse = resultats.getString("motDePasse");
+                String motDePasse = resultats.getString("mot_de_passe");
                 String adresse = resultats.getString("adresse");
                 String telephone = resultats.getString("telephone");
 
@@ -42,31 +42,51 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public void ajouter(Client client) {
-        String query = "INSERT INTO Client (IDUtilisateur, adresse, telephone) VALUES (?, ?, ?)";
+        String queryUtilisateur = "INSERT INTO Utilisateur (nom, email, mot_de_passe) VALUES (?, ?, ?)";
+        String queryClient = "INSERT INTO Client (IDUtilisateur, adresse, telephone) VALUES (?, ?, ?)";
 
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            connexion.setAutoCommit(false);
 
-            preparedStatement.setInt(1, client.getId());
-            preparedStatement.setString(2, client.getAdresse());
-            preparedStatement.setString(3, client.getTelephone());
-            preparedStatement.executeUpdate();
+            try (PreparedStatement preparedStatementUtilisateur = connexion.prepareStatement(queryUtilisateur, Statement.RETURN_GENERATED_KEYS)) {
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    client.setIDClient(generatedKeys.getInt(1));
+                preparedStatementUtilisateur.setString(1, client.getNom());
+                preparedStatementUtilisateur.setString(2, client.getEmail());
+                preparedStatementUtilisateur.setString(3, client.getMotDePasse());
+                preparedStatementUtilisateur.executeUpdate();
+
+                try (ResultSet generatedKeys = preparedStatementUtilisateur.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int idUtilisateur = generatedKeys.getInt(1);
+                        client.setId(idUtilisateur);
+
+                        try (PreparedStatement preparedStatementClient = connexion.prepareStatement(queryClient, Statement.RETURN_GENERATED_KEYS)) {
+                            preparedStatementClient.setInt(1, idUtilisateur);
+                            preparedStatementClient.setString(2, client.getAdresse());
+                            preparedStatementClient.setString(3, client.getTelephone());
+                            preparedStatementClient.executeUpdate();
+
+                            try (ResultSet generatedKeysClient = preparedStatementClient.getGeneratedKeys()) {
+                                if (generatedKeysClient.next()) {
+                                    client.setIDClient(generatedKeysClient.getInt(1));
+                                }
+                            }
+                        }
+                    }
                 }
             }
+            connexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Ajout du client impossible");
         }
     }
 
+
     @Override
     public Client chercher(int idClient) {
         Client client = null;
-        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.id WHERE c.IDClient = ?";
+        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.IDUtilisateur WHERE c.IDClient = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
@@ -77,7 +97,7 @@ public class clientDaoImpl implements clientDao {
                     int idUtilisateur = resultats.getInt("IDUtilisateur");
                     String nom = resultats.getString("nom");
                     String email = resultats.getString("email");
-                    String motDePasse = resultats.getString("motDePasse");
+                    String motDePasse = resultats.getString("mot_de_passe");
                     String adresse = resultats.getString("adresse");
                     String telephone = resultats.getString("telephone");
 
@@ -94,19 +114,28 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public Client modifier(Client client) {
-        String query = "UPDATE Client SET adresse = ?, telephone = ? WHERE IDClient = ?";
+        String queryClient = "UPDATE Client SET adresse = ?, telephone = ? WHERE IDClient = ?";
+        String queryUtilisateur = "UPDATE Utilisateur SET nom = ?, email = ?, mot_de_passe = ? WHERE IDUtilisateur = ?";
 
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            connexion.setAutoCommit(false);
 
-            preparedStatement.setString(1, client.getAdresse());
-            preparedStatement.setString(2, client.getTelephone());
-            preparedStatement.setInt(3, client.getIDClient());
+            try (PreparedStatement preparedStatementUtilisateur = connexion.prepareStatement(queryUtilisateur);
+                 PreparedStatement preparedStatementClient = connexion.prepareStatement(queryClient)) {
 
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("Mise à jour échouée : client non trouvé");
+                preparedStatementUtilisateur.setString(1, client.getNom());
+                preparedStatementUtilisateur.setString(2, client.getEmail());
+                preparedStatementUtilisateur.setString(3, client.getMotDePasse());
+                preparedStatementUtilisateur.setInt(4, client.getId());
+                preparedStatementUtilisateur.executeUpdate();
+
+                preparedStatementClient.setString(1, client.getAdresse());
+                preparedStatementClient.setString(2, client.getTelephone());
+                preparedStatementClient.setInt(3, client.getIDClient());
+                preparedStatementClient.executeUpdate();
             }
+
+            connexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Mise à jour du client impossible");
@@ -117,13 +146,23 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public void supprimer(Client client) {
-        String query = "DELETE FROM Client WHERE IDClient = ?";
+        String queryClient = "DELETE FROM Client WHERE IDClient = ?";
+        String queryUtilisateur = "DELETE FROM Utilisateur WHERE IDUtilisateur = ?";
 
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            connexion.setAutoCommit(false);
 
-            preparedStatement.setInt(1, client.getIDClient());
-            preparedStatement.executeUpdate();
+            try (PreparedStatement preparedStatementClient = connexion.prepareStatement(queryClient);
+                 PreparedStatement preparedStatementUtilisateur = connexion.prepareStatement(queryUtilisateur)) {
+
+                preparedStatementClient.setInt(1, client.getIDClient());
+                preparedStatementClient.executeUpdate();
+
+                preparedStatementUtilisateur.setInt(1, client.getId());
+                preparedStatementUtilisateur.executeUpdate();
+            }
+
+            connexion.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Suppression du client impossible");

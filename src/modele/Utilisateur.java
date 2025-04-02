@@ -24,4 +24,8 @@ public abstract class Utilisateur {
     public String getMotDePasse() {
         return motDePasse;
     }
+
+    public void setId(int anInt) {
+        this.id = anInt;
+    }
 }
