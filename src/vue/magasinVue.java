@@ -11,7 +11,7 @@ public class magasinVue extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 🟦 Bandeau bleu (header)
+        // 🗾 Bandeau bleu (header)
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(new Color(30, 144, 255));
         headerPanel.setPreferredSize(new Dimension(0, 250));
@@ -38,7 +38,7 @@ public class magasinVue extends JFrame {
             dispose();
         });
 
-        // 🟫 Zone principale avec les produits
+        // 🖛 Zone principale avec les produits
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(2, 3, 30, 30));
         contentPanel.setBackground(new Color(245, 245, 220));
@@ -54,7 +54,7 @@ public class magasinVue extends JFrame {
                 "Chaussures Nike", "Short Sport", "T-shirt Homme"
         };
 
-        String[] prix = {
+        String[] prixProduits = {
                 "250 €", "35 €", "12 €",
                 "180 €", "40 €", "25 €"
         };
@@ -76,8 +76,8 @@ public class magasinVue extends JFrame {
             nomLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
             nomLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // Prix
-            JLabel prixLabel = new JLabel(prix[i]);
+            // Prix affiché
+            JLabel prixLabel = new JLabel(prixProduits[i]);
             prixLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
             prixLabel.setForeground(new Color(0, 102, 0));
             prixLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -87,6 +87,15 @@ public class magasinVue extends JFrame {
             produitPanel.add(Box.createVerticalStrut(10));
             produitPanel.add(nomLabel);
             produitPanel.add(prixLabel);
+
+            int index = i;
+            produitPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            produitPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    new produitVue(nomsProduits[index]);
+                    dispose();
+                }
+            });
 
             contentPanel.add(produitPanel);
         }
