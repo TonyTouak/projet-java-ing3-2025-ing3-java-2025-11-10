@@ -14,7 +14,7 @@ public class utilisateurDaoImpl implements utilisateurDao {
     @Override
     public ArrayList<Utilisateur> getAll() {
         ArrayList<Utilisateur> listeUtilisateurs = new ArrayList<>();
-        String query = "SELECT * FROM Utilisateur";
+        String query = "SELECT * FROM utilisateur";
 
         try (Connection connexion = daoFactory.getConnection();
              Statement statement = connexion.createStatement();
