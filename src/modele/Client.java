@@ -7,6 +7,7 @@ public class Client extends Utilisateur {
     protected String adresse;
     protected String telephone;
 
+
     public Client(int id, String nom, String email, String motDePasse,int IDClient,
                   String adresse, String telephone) {
         super(id, nom, email, motDePasse);
@@ -31,4 +32,6 @@ public class Client extends Utilisateur {
     public void setIDClient(int IDClient) {
         this.IDClient = IDClient;
     }
+
+
 }

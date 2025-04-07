@@ -1,11 +1,13 @@
 package vue;
 
+import modele.Client;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class produitVue extends JFrame {
 
-    public produitVue(String nomProduit) {
+    public produitVue(String nomProduit, Client client) {
         setTitle(nomProduit);
         setSize(1000, 700);
         setLocationRelativeTo(null);
@@ -111,7 +113,7 @@ public class produitVue extends JFrame {
         JButton retourButton = new JButton("Retour à la boutique");
         retourButton.setBounds(530, 220, 180, 40);
         retourButton.addActionListener(e -> {
-            new magasinVue();
+            new magasinVue(client);
             dispose();
         });
         contentPanel.add(retourButton);
