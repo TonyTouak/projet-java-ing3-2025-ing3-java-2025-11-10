@@ -28,7 +28,6 @@ public class clientDaoImpl implements clientDao {
                 String motDePasse = resultats.getString("mot_de_passe");
                 String adresse = resultats.getString("adresse");
                 String telephone = resultats.getString("telephone");
-                String prenom = resultats.getString("prenom");
 
 
                 Client client = new Client(idUtilisateur, nom, email, motDePasse, idClient, adresse, telephone);
@@ -104,7 +103,6 @@ public class clientDaoImpl implements clientDao {
                     String motDePasse = resultats.getString("mot_de_passe");
                     String adresse = resultats.getString("adresse");
                     String telephone = resultats.getString("telephone");
-                    String prenom = resultats.getString("prenom");
 
 
                     client = new Client(idUtilisateur, nom, email, motDePasse, idClient, adresse, telephone);
