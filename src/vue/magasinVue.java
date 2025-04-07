@@ -1,17 +1,22 @@
 package vue;
 
+import modele.Client;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class magasinVue extends JFrame {
 
-    public magasinVue() {
+    public magasinVue(Client client) {
+        menuVue menuVue = new menuVue(client, this);
+        setJMenuBar(menuVue.creerMenuBar());
+
+        setVisible(true);
         setTitle("Bienvenue");
         setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 🗾 Bandeau bleu (header)
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(new Color(30, 144, 255));
         headerPanel.setPreferredSize(new Dimension(0, 250));
@@ -32,13 +37,11 @@ public class magasinVue extends JFrame {
         headerPanel.add(boutonBoutique);
         headerPanel.add(boutonInscription);
 
-        // Action vers loginVue
         boutonInscription.addActionListener(e -> {
             new loginVue();
             dispose();
         });
 
-        // 🖛 Zone principale avec les produits
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(2, 3, 30, 30));
         contentPanel.setBackground(new Color(245, 245, 220));
@@ -65,18 +68,15 @@ public class magasinVue extends JFrame {
             produitPanel.setBackground(Color.WHITE);
             produitPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-            // Image du produit
             ImageIcon icon = new ImageIcon("images/" + nomsFichiers[i]);
             Image scaledImg = icon.getImage().getScaledInstance(130, 130, Image.SCALE_SMOOTH);
             JLabel imageLabel = new JLabel(new ImageIcon(scaledImg));
             imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // Nom du produit
             JLabel nomLabel = new JLabel(nomsProduits[i]);
             nomLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
             nomLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // Prix affiché
             JLabel prixLabel = new JLabel(prixProduits[i]);
             prixLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
             prixLabel.setForeground(new Color(0, 102, 0));
@@ -92,7 +92,7 @@ public class magasinVue extends JFrame {
             produitPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
             produitPanel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    new produitVue(nomsProduits[index]);
+                    new produitVue(nomsProduits[index], client);
                     dispose();
                 }
             });
@@ -100,7 +100,6 @@ public class magasinVue extends JFrame {
             contentPanel.add(produitPanel);
         }
 
-        // 🧱 Final Layout
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(headerPanel, BorderLayout.NORTH);
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -108,7 +107,4 @@ public class magasinVue extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(magasinVue::new);
-    }
 }

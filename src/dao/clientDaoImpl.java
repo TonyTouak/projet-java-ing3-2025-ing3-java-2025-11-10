@@ -14,7 +14,7 @@ public class clientDaoImpl implements clientDao {
     @Override
     public ArrayList<Client> getAll() {
         ArrayList<Client> listeClients = new ArrayList<>();
-        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.IDUtilisateur";
+        String query = "SELECT * FROM client c JOIN utilisateur u ON c.IDUtilisateur = u.IDUtilisateur";
 
         try (Connection connexion = daoFactory.getConnection();
              Statement statement = connexion.createStatement();
@@ -28,6 +28,8 @@ public class clientDaoImpl implements clientDao {
                 String motDePasse = resultats.getString("mot_de_passe");
                 String adresse = resultats.getString("adresse");
                 String telephone = resultats.getString("telephone");
+                String prenom = resultats.getString("prenom");
+
 
                 Client client = new Client(idUtilisateur, nom, email, motDePasse, idClient, adresse, telephone);
                 listeClients.add(client);
@@ -42,8 +44,8 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public void ajouter(Client client) {
-        String queryUtilisateur = "INSERT INTO Utilisateur (nom, email, mot_de_passe) VALUES (?, ?, ?)";
-        String queryClient = "INSERT INTO Client (IDUtilisateur, adresse, telephone) VALUES (?, ?, ?)";
+        String queryUtilisateur = "INSERT INTO utilisateur (nom, email, mot_de_passe) VALUES (?, ?, ?)";
+        String queryClient = "INSERT INTO client (IDUtilisateur, adresse, telephone) VALUES ( ?, ?, ?)";
 
         try (Connection connexion = daoFactory.getConnection()) {
             connexion.setAutoCommit(false);
@@ -53,6 +55,7 @@ public class clientDaoImpl implements clientDao {
                 preparedStatementUtilisateur.setString(1, client.getNom());
                 preparedStatementUtilisateur.setString(2, client.getEmail());
                 preparedStatementUtilisateur.setString(3, client.getMotDePasse());
+
                 preparedStatementUtilisateur.executeUpdate();
 
                 try (ResultSet generatedKeys = preparedStatementUtilisateur.getGeneratedKeys()) {
@@ -64,6 +67,7 @@ public class clientDaoImpl implements clientDao {
                             preparedStatementClient.setInt(1, idUtilisateur);
                             preparedStatementClient.setString(2, client.getAdresse());
                             preparedStatementClient.setString(3, client.getTelephone());
+
                             preparedStatementClient.executeUpdate();
 
                             try (ResultSet generatedKeysClient = preparedStatementClient.getGeneratedKeys()) {
@@ -86,7 +90,7 @@ public class clientDaoImpl implements clientDao {
     @Override
     public Client chercher(int idClient) {
         Client client = null;
-        String query = "SELECT * FROM Client c JOIN Utilisateur u ON c.IDUtilisateur = u.IDUtilisateur WHERE c.IDClient = ?";
+        String query = "SELECT * FROM client c JOIN utilisateur u ON c.IDUtilisateur = u.IDUtilisateur WHERE c.IDClient = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
@@ -100,6 +104,8 @@ public class clientDaoImpl implements clientDao {
                     String motDePasse = resultats.getString("mot_de_passe");
                     String adresse = resultats.getString("adresse");
                     String telephone = resultats.getString("telephone");
+                    String prenom = resultats.getString("prenom");
+
 
                     client = new Client(idUtilisateur, nom, email, motDePasse, idClient, adresse, telephone);
                 }
@@ -114,8 +120,8 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public Client modifier(Client client) {
-        String queryClient = "UPDATE Client SET adresse = ?, telephone = ? WHERE IDClient = ?";
-        String queryUtilisateur = "UPDATE Utilisateur SET nom = ?, email = ?, mot_de_passe = ? WHERE IDUtilisateur = ?";
+        String queryClient = "UPDATE client SET adresse = ?, telephone = ? WHERE IDClient = ?";
+        String queryUtilisateur = "UPDATE utilisateur SET nom = ?, email = ?, mot_de_passe = ? WHERE IDUtilisateur = ?";
 
         try (Connection connexion = daoFactory.getConnection()) {
             connexion.setAutoCommit(false);
@@ -131,7 +137,7 @@ public class clientDaoImpl implements clientDao {
 
                 preparedStatementClient.setString(1, client.getAdresse());
                 preparedStatementClient.setString(2, client.getTelephone());
-                preparedStatementClient.setInt(3, client.getIDClient());
+                preparedStatementClient.setInt(4, client.getIDClient());
                 preparedStatementClient.executeUpdate();
             }
 
@@ -146,8 +152,8 @@ public class clientDaoImpl implements clientDao {
 
     @Override
     public void supprimer(Client client) {
-        String queryClient = "DELETE FROM Client WHERE IDClient = ?";
-        String queryUtilisateur = "DELETE FROM Utilisateur WHERE IDUtilisateur = ?";
+        String queryClient = "DELETE FROM client WHERE IDClient = ?";
+        String queryUtilisateur = "DELETE FROM utilisateur WHERE IDUtilisateur = ?";
 
         try (Connection connexion = daoFactory.getConnection()) {
             connexion.setAutoCommit(false);
