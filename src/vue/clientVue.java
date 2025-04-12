@@ -13,26 +13,34 @@ public class clientVue extends JFrame {
         this.client = client;
 
         setTitle("Espace Client - " + client.getNom());
-        setSize(600, 600);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(245, 245, 220));
+
 
         menuVue menuVue = new menuVue(client, this);
         setJMenuBar(menuVue.creerMenuBar());
 
-        setVisible(true);
-
         JPanel header = new JPanel();
         header.setBackground(new Color(30, 144, 255));
+        header.setPreferredSize(new Dimension(1000, 80));
         JLabel bienvenue = new JLabel("Bienvenue, " + client.getNom() + " !");
         bienvenue.setForeground(Color.WHITE);
-        bienvenue.setFont(new Font("SansSerif", Font.BOLD, 22));
+        bienvenue.setFont(new Font("SansSerif", Font.BOLD, 26));
         header.add(bienvenue);
+        add(header, BorderLayout.NORTH);
+
+        JPanel panelWrapper = new JPanel(new GridBagLayout());
+        panelWrapper.setBackground(new Color(245, 245, 220));
 
         JPanel infosPanel = new JPanel();
         infosPanel.setLayout(new BoxLayout(infosPanel, BoxLayout.Y_AXIS));
         infosPanel.setBackground(new Color(245, 245, 220));
         infosPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        infosPanel.setPreferredSize(new Dimension(500, 300));
+        infosPanel.setMaximumSize(new Dimension(600, 400));
 
         infosPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
         infosPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
@@ -53,16 +61,15 @@ public class clientVue extends JFrame {
         infosPanel.add(Box.createVerticalStrut(20));
         infosPanel.add(btnDeconnexion);
 
-        JScrollPane scroll = new JScrollPane(infosPanel);
+        panelWrapper.add(infosPanel);
+
+        JScrollPane scroll = new JScrollPane(panelWrapper);
         scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(header, BorderLayout.NORTH);
-        getContentPane().add(scroll, BorderLayout.CENTER);
-
+        add(scroll, BorderLayout.CENTER);
         setVisible(true);
     }
-
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
@@ -70,5 +77,4 @@ public class clientVue extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         return label;
     }
-
 }

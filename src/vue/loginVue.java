@@ -8,10 +8,8 @@ import dao.clientDao;
 import dao.clientDaoImpl;
 import dao.administrateurDao;
 import dao.administrateurDaoImpl;
-
 import modele.Administrateur;
 import modele.Client;
-
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,38 +21,44 @@ public class loginVue extends JFrame {
 
     public loginVue() {
         setTitle("Bienvenue");
-        setSize(400, 350);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", ""); // pour tester, à mettre uniquement dans le main sinon
+        DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", "");
         utilisateurDao = new utilisateurDaoImpl(daoFactory);
 
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 25));
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
         headerPanel.setBackground(new Color(30, 144, 255));
-        headerPanel.setPreferredSize(new Dimension(0, 100));
+        headerPanel.setPreferredSize(new Dimension(0, 150));
 
-        JLabel titleLabel = new JLabel("Bienvenue sur ShoppingApp");
+        JLabel titleLabel = new JLabel("Bienvenue sur ShopTopie");
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
         headerPanel.add(titleLabel);
 
         JPanel contentPanel = new JPanel(new GridBagLayout());
         contentPanel.setBackground(new Color(245, 245, 220));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 5, 10);
+        gbc.insets = new Insets(15, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel emailLabel = new JLabel("Email :");
-        emailField = new JTextField(15);
+        emailLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        emailField = new JTextField(20);
+        emailField.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        emailField.setPreferredSize(new Dimension(300, 30));
         gbc.gridx = 0; gbc.gridy = 0;
         contentPanel.add(emailLabel, gbc);
         gbc.gridx = 1;
         contentPanel.add(emailField, gbc);
 
         JLabel passwordLabel = new JLabel("Mot de passe :");
-        passwordField = new JPasswordField(15);
+        passwordLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        passwordField = new JPasswordField(20);
+        passwordField.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        passwordField.setPreferredSize(new Dimension(300, 30));
         gbc.gridx = 0; gbc.gridy = 1;
         contentPanel.add(passwordLabel, gbc);
         gbc.gridx = 1;
@@ -63,10 +67,12 @@ public class loginVue extends JFrame {
         JButton boutonConnexion = new JButton("Se connecter");
         JButton boutonInscription = new JButton("S'inscrire");
 
-        boutonConnexion.setPreferredSize(new Dimension(140, 40));
-        boutonInscription.setPreferredSize(new Dimension(140, 40));
+        boutonConnexion.setFont(new Font("SansSerif", Font.BOLD, 16));
+        boutonInscription.setFont(new Font("SansSerif", Font.BOLD, 16));
+        boutonConnexion.setPreferredSize(new Dimension(200, 50));
+        boutonInscription.setPreferredSize(new Dimension(200, 50));
 
-        JPanel boutonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JPanel boutonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
         boutonsPanel.setBackground(new Color(245, 245, 220));
         boutonsPanel.add(boutonConnexion);
         boutonsPanel.add(boutonInscription);
@@ -94,9 +100,6 @@ public class loginVue extends JFrame {
         String email = emailField.getText().trim();
         String motDePasse = new String(passwordField.getPassword());
 
-        System.out.println(email);
-        System.out.println(motDePasse);
-
         Utilisateur utilisateur = utilisateurDao.chercher(email, motDePasse);
         if (utilisateur != null) {
             JOptionPane.showMessageDialog(this, "Bienvenue " + utilisateur.getNom() + " !");
@@ -105,7 +108,6 @@ public class loginVue extends JFrame {
             JOptionPane.showMessageDialog(this, "Identifiants incorrects.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     public void verifierEtRediriger(String email, String motDePasse) {
         utilisateurDao utilisateurDao = new utilisateurDaoImpl(DaoFactory.getInstance("shopping","root",""));
@@ -133,7 +135,6 @@ public class loginVue extends JFrame {
             JOptionPane.showMessageDialog(null, "Identifiants incorrects !");
         }
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(loginVue::new);
