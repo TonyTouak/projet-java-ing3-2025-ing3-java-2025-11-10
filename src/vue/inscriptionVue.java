@@ -14,7 +14,7 @@ public class inscriptionVue extends JFrame {
 
     public inscriptionVue() {
         setTitle("Inscription");
-        setSize(450, 400);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -27,7 +27,7 @@ public class inscriptionVue extends JFrame {
         nomField = addField(panel, gbc, "Nom :", 0);
         emailField = addField(panel, gbc, "Email :", 2);
         passwordField = new JPasswordField(15);
-        addLabeledComponent(panel, gbc, "Mot de passe :", passwordField, 3);
+        addLabel(panel, gbc, "Mot de passe :", passwordField, 3);
         adresseField = addField(panel, gbc, "Adresse :", 4);
         telephoneField = addField(panel, gbc, "Téléphone :", 5);
 
@@ -45,11 +45,11 @@ public class inscriptionVue extends JFrame {
 
     private JTextField addField(JPanel panel, GridBagConstraints gbc, String label, int y) {
         JTextField field = new JTextField(15);
-        addLabeledComponent(panel, gbc, label, field, y);
+        addLabel(panel, gbc, label, field, y);
         return field;
     }
 
-    private void addLabeledComponent(JPanel panel, GridBagConstraints gbc, String label, JComponent field, int y) {
+    private void addLabel(JPanel panel, GridBagConstraints gbc, String label, JComponent field, int y) {
         gbc.gridx = 0; gbc.gridy = y;
         panel.add(new JLabel(label), gbc);
         gbc.gridx = 1;
@@ -64,7 +64,7 @@ public class inscriptionVue extends JFrame {
         String telephone = telephoneField.getText().trim();
 
         if (nom.isEmpty() || email.isEmpty() || motDePasse.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Veuillez remplir les champs obligatoires.");
+            JOptionPane.showMessageDialog(this, "Veuillez remplir les champs pour vous inscrire.");
             return;
         }
 
@@ -74,10 +74,9 @@ public class inscriptionVue extends JFrame {
         Client nouveauClient = new Client(0, nom, email, motDePasse, 0, adresse, telephone);
         clientDao.ajouter(nouveauClient);
 
-        Client clientCree = clientDao.chercher(nouveauClient.getId());
 
         JOptionPane.showMessageDialog(this, "Inscription réussie !");
-        new clientVue(clientCree);
+        new clientVue(nouveauClient);
         dispose();
     }
 }
