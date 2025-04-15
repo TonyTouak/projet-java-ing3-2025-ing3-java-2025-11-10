@@ -33,11 +33,11 @@ public class clientVue extends JFrame {
         add(header, BorderLayout.NORTH);
 
         JPanel panelWrapper = new JPanel(new GridBagLayout());
-        panelWrapper.setBackground(new Color(245, 245, 220));
+        panelWrapper.setBackground(new Color(255, 255, 255));
 
         JPanel infosPanel = new JPanel();
         infosPanel.setLayout(new BoxLayout(infosPanel, BoxLayout.Y_AXIS));
-        infosPanel.setBackground(new Color(245, 245, 220));
+        infosPanel.setBackground(new Color(255, 255, 255));
         infosPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         infosPanel.setPreferredSize(new Dimension(500, 300));
         infosPanel.setMaximumSize(new Dimension(600, 400));
