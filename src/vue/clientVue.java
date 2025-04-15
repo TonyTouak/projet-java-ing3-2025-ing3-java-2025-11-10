@@ -17,7 +17,7 @@ public class clientVue extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(245, 245, 220));
+        getContentPane().setBackground(new Color(255, 255, 255));
 
 
         menuVue menuVue = new menuVue(client, this);
