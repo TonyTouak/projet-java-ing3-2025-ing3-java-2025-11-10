@@ -31,7 +31,7 @@ public class paiementVue extends JFrame {
 
         // 🟫 Zone centrale
         JPanel contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(new Color(245, 245, 220));
+        contentPanel.setBackground(new Color(255, 255, 255));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
