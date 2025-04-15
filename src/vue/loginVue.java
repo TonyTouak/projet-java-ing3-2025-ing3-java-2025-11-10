@@ -66,16 +66,21 @@ public class loginVue extends JFrame {
 
         JButton boutonConnexion = new JButton("Se connecter");
         JButton boutonInscription = new JButton("S'inscrire");
+        JButton boutonContinuer = new JButton("Continuer sans se connecter");
 
         boutonConnexion.setFont(new Font("SansSerif", Font.BOLD, 16));
         boutonInscription.setFont(new Font("SansSerif", Font.BOLD, 16));
+        boutonContinuer.setFont(new Font("SansSerif", Font.BOLD, 12));
+
         boutonConnexion.setPreferredSize(new Dimension(200, 50));
         boutonInscription.setPreferredSize(new Dimension(200, 50));
+        boutonContinuer.setPreferredSize(new Dimension(250, 40));
 
         JPanel boutonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
         boutonsPanel.setBackground(new Color(245, 245, 220));
         boutonsPanel.add(boutonConnexion);
         boutonsPanel.add(boutonInscription);
+        boutonsPanel.add(boutonContinuer);
 
         gbc.gridy = 2;
         gbc.gridx = 0;
@@ -91,6 +96,10 @@ public class loginVue extends JFrame {
         boutonInscription.addActionListener(e -> {
             dispose();
             new inscriptionVue();
+        });
+        boutonContinuer.addActionListener(e -> {
+            dispose();
+            new accueilVue(null); // remplace par accueilVue() si tu veux aller ailleurs
         });
 
         setVisible(true);
