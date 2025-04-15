@@ -38,7 +38,7 @@ public class loginVue extends JFrame {
         headerPanel.add(titleLabel);
 
         JPanel contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(new Color(245, 245, 220));
+        contentPanel.setBackground(new Color(255, 255, 255));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 10, 15);
@@ -77,7 +77,7 @@ public class loginVue extends JFrame {
         boutonContinuer.setPreferredSize(new Dimension(250, 40));
 
         JPanel boutonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
-        boutonsPanel.setBackground(new Color(245, 245, 220));
+        boutonsPanel.setBackground(new Color(255, 255, 255));
         boutonsPanel.add(boutonConnexion);
         boutonsPanel.add(boutonInscription);
         boutonsPanel.add(boutonContinuer);
