@@ -79,17 +79,18 @@ public class administrateurDaoImpl implements administrateurDao {
     }
 
     @Override
-    public Administrateur chercher(int idAdmin) {
+    public Administrateur chercher(int idUtilisateur) {
         Administrateur admin = null;
-        String query = "SELECT * FROM Administrateur a JOIN Utilisateur u ON a.IDUtilisateur = u.IDUtilisateur WHERE a.IDAdmin = ?";
+        String query = "SELECT * FROM Administrateur a JOIN Utilisateur u ON a.IDUtilisateur = u.IDUtilisateur WHERE a.IDUtilisateur = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
 
-            preparedStatement.setInt(1, idAdmin);
+            preparedStatement.setInt(1, idUtilisateur);
+
             try (ResultSet resultats = preparedStatement.executeQuery()) {
                 if (resultats.next()) {
-                    int idUtilisateur = resultats.getInt("IDUtilisateur");
+                    int idAdmin = resultats.getInt("IDAdmin");
                     String nom = resultats.getString("nom");
                     String email = resultats.getString("email");
                     String motDePasse = resultats.getString("mot_de_passe");
@@ -104,6 +105,7 @@ public class administrateurDaoImpl implements administrateurDao {
 
         return admin;
     }
+
 
     @Override
     public void supprimer(Administrateur admin) {

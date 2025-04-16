@@ -87,23 +87,23 @@ public class clientDaoImpl implements clientDao {
 
 
     @Override
-    public Client chercher(int idClient) {
+    public Client chercher(int idUtilisateur) {
         Client client = null;
-        String query = "SELECT * FROM client c JOIN utilisateur u ON c.IDUtilisateur = u.IDUtilisateur WHERE c.IDClient = ?";
+        String query = "SELECT * FROM client c JOIN utilisateur u ON c.IDUtilisateur = u.IDUtilisateur WHERE c.IDUtilisateur = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
 
-            preparedStatement.setInt(1, idClient);
+            preparedStatement.setInt(1, idUtilisateur);
+
             try (ResultSet resultats = preparedStatement.executeQuery()) {
                 if (resultats.next()) {
-                    int idUtilisateur = resultats.getInt("IDUtilisateur");
+                    int idClient = resultats.getInt("IDClient");
                     String nom = resultats.getString("nom");
                     String email = resultats.getString("email");
                     String motDePasse = resultats.getString("mot_de_passe");
                     String adresse = resultats.getString("adresse");
                     String telephone = resultats.getString("telephone");
-
 
                     client = new Client(idUtilisateur, nom, email, motDePasse, idClient, adresse, telephone);
                 }
@@ -115,6 +115,7 @@ public class clientDaoImpl implements clientDao {
 
         return client;
     }
+
 
     @Override
     public Client modifier(Client client) {
