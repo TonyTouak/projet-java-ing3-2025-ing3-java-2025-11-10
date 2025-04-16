@@ -99,7 +99,7 @@ public class loginVue extends JFrame {
         });
         boutonContinuer.addActionListener(e -> {
             dispose();
-            new accueilVue(null); // remplace par accueilVue() si tu veux aller ailleurs
+            new accueilVue(null);
         });
 
         setVisible(true);
