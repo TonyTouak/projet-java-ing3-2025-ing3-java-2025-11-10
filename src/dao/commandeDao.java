@@ -3,6 +3,7 @@ package dao;
 import modele.Commande;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface commandeDao {
     ArrayList<Commande> getAll();
@@ -12,4 +13,6 @@ public interface commandeDao {
     Commande chercher(int idCommande);
 
     void supprimer(Commande commande);
+
+    List<Commande> getCommandesParClientID(int idClient);
 }

@@ -117,6 +117,37 @@ public class clientDaoImpl implements clientDao {
     }
 
 
+    public Client chercherParIdUtilisateur(int idUtilisateur) {
+        Client client = null;
+        String query = "SELECT * FROM client WHERE IDUtilisateur = ?";
+
+        try (Connection connexion = daoFactory.getConnection();
+             PreparedStatement ps = connexion.prepareStatement(query)) {
+
+            ps.setInt(1, idUtilisateur);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                client = new Client(
+                        rs.getInt("IDClient"),
+                        "Nom",
+                        "email",
+                        "motdepasse",
+                        rs.getInt("IDUtilisateur"),
+                        rs.getString("adresse"),
+                        rs.getString("telephone")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return client;
+    }
+
+
+
     @Override
     public Client modifier(Client client) {
         String queryClient = "UPDATE client SET adresse = ?, telephone = ? WHERE IDClient = ?";
@@ -173,4 +204,8 @@ public class clientDaoImpl implements clientDao {
             System.out.println("Suppression du client impossible");
         }
     }
-}
+
+
+    }
+
+
