@@ -1,9 +1,11 @@
 package vue;
 
 import modele.Client;
+import modele.Commande;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class clientVue extends JFrame {
 
@@ -16,9 +18,7 @@ public class clientVue extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(255, 255, 255));
-
 
         menuVue menuVue = new menuVue(client, this);
         setJMenuBar(menuVue.creerMenuBar());
@@ -32,22 +32,42 @@ public class clientVue extends JFrame {
         header.add(bienvenue);
         add(header, BorderLayout.NORTH);
 
-        JPanel panelWrapper = new JPanel(new GridBagLayout());
-        panelWrapper.setBackground(new Color(255, 255, 255));
+        // Wrapper principal scrollable
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(new Color(255, 255, 255));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        JPanel infosPanel = new JPanel();
-        infosPanel.setLayout(new BoxLayout(infosPanel, BoxLayout.Y_AXIS));
-        infosPanel.setBackground(new Color(255, 255, 255));
-        infosPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-        infosPanel.setPreferredSize(new Dimension(500, 300));
-        infosPanel.setMaximumSize(new Dimension(600, 400));
+        // Infos client
+        contentPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
+        contentPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
+        contentPanel.add(createLabel("📍 Adresse : " + client.getAdresse()));
+        contentPanel.add(createLabel("📞 Téléphone : " + client.getTelephone()));
+        contentPanel.add(createLabel("👤 Nom : " + client.getNom()));
 
-        infosPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
-        infosPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
-        infosPanel.add(createLabel("📍 Adresse : " + client.getAdresse()));
-        infosPanel.add(createLabel("📞 Téléphone : " + client.getTelephone()));
-        infosPanel.add(createLabel("👤 Nom : " + client.getNom()));
+        contentPanel.add(Box.createVerticalStrut(30));
 
+        // Commandes
+        JLabel titreCommandes = new JLabel("🧾 Commandes passées :");
+        titreCommandes.setFont(new Font("SansSerif", Font.BOLD, 18));
+        contentPanel.add(titreCommandes);
+
+        List<Commande> commandes = client.getCommandes();
+        if (commandes != null && !commandes.isEmpty()) {
+            for (Commande commande : commandes) {
+                String texteCommande = "- Commande #" + commande.getId() +
+                        " du " + commande.getDate() +
+                        " | " + commande.getPrixFinal() + " €" +
+                        " x " + commande.getQuantite();
+                contentPanel.add(createLabel(texteCommande));
+            }
+        } else {
+            contentPanel.add(createLabel("Aucune commande passée."));
+        }
+
+        contentPanel.add(Box.createVerticalStrut(30));
+
+        // Bouton déconnexion (tout en bas)
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDeconnexion.setBackground(new Color(30, 144, 255));
@@ -57,15 +77,14 @@ public class clientVue extends JFrame {
             dispose();
             new loginVue();
         });
+        contentPanel.add(btnDeconnexion);
+        contentPanel.add(Box.createVerticalStrut(20));
 
-        infosPanel.add(Box.createVerticalStrut(20));
-        infosPanel.add(btnDeconnexion);
-
-        panelWrapper.add(infosPanel);
-
-        JScrollPane scroll = new JScrollPane(panelWrapper);
+        JScrollPane scroll = new JScrollPane(contentPanel);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
+        scroll.getVerticalScrollBar().setPreferredSize(new Dimension(10, Integer.MAX_VALUE));
+        scroll.getVerticalScrollBar().setBackground(Color.WHITE);
 
         add(scroll, BorderLayout.CENTER);
         setVisible(true);

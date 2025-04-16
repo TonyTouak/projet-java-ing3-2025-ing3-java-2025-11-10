@@ -1,11 +1,14 @@
 package modele;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Client extends Utilisateur {
     protected int IDClient;
     protected String adresse;
     protected String telephone;
+    private List<Commande> commandes;
 
 
     public Client(int id, String nom, String email, String motDePasse,int IDClient,
@@ -14,6 +17,7 @@ public class Client extends Utilisateur {
         this.IDClient = IDClient;
         this.adresse = adresse;
         this.telephone = telephone;
+        this.commandes = new ArrayList<>();
 
     }
 
@@ -32,6 +36,16 @@ public class Client extends Utilisateur {
     public void setIDClient(int IDClient) {
         this.IDClient = IDClient;
     }
+
+    public List<Commande> getCommandes() {
+        return commandes;
+    }
+
+    public void ajouterCommande(Commande commande) {
+        this.commandes.add(commande);
+    }
+
+
 
 
 }
