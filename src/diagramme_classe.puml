@@ -1,0 +1,189 @@
+@startuml
+
+top to bottom direction
+skinparam classPadding 2
+skinparam classMargin 2
+skinparam nodesep 10
+skinparam ranksep 10
+skinparam dpi 150
+
+title Diagramme de classes simplifié
+
+' === MODELE ===
+abstract class Utilisateur
+class Administrateur
+class Client
+class Article
+class Commande
+class Panier
+
+' === VUES ===
+class accueilVue
+class adminVue
+class articleVue
+class clientVue
+class inscriptionVue
+class loginVue
+class magasinFemmeVue
+class magasinHommeVue
+interface magasinVue
+class menuVue
+class paiementVue
+class panierVue
+
+' === CONTRÔLEURS ===
+class articleControleur
+class magasinControleur
+class panierControleur
+
+' === DAO ===
+class DaoFactory
+interface administrateurDao
+interface articleDao
+interface clientDao
+interface commandeDao
+interface utilisateurDao
+class administrateurDaoImpl
+class articleDaoImpl
+class clientDaoImpl
+class commandeDaoImpl
+class utilisateurDaoImpl
+
+' === RELATIONS CLASSES METIER ===
+Utilisateur <|-- Administrateur
+Utilisateur <|-- Client
+Client "1" o-- "*" Commande
+Commande "*" --> "1" Article
+Panier "1" --> "*" Article
+
+' === RELATIONS VUES ===
+accueilVue --> menuVue
+adminVue --> menuVue
+articleVue --> menuVue
+clientVue --> menuVue
+inscriptionVue --> menuVue
+loginVue --> menuVue
+magasinFemmeVue --> menuVue
+magasinHommeVue --> menuVue
+panierVue --> menuVue
+paiementVue --> menuVue
+
+magasinFemmeVue ..|> magasinVue
+magasinHommeVue ..|> magasinVue
+
+' === RELATIONS CONTROLEURS ===
+magasinControleur --> magasinVue : 1
+magasinControleur --> articleDaoImpl : 1
+magasinControleur --> Article : *
+
+panierControleur --> panierVue : 1
+panierControleur --> Panier : 1
+panierControleur --> Client : 1
+panierControleur --> Article : *
+
+articleControleur --> articleVue : 1
+articleControleur --> Article : 1
+articleControleur --> Client : 1
+
+' === RELATIONS DAO ===
+administrateurDao <|.. administrateurDaoImpl
+articleDao <|.. articleDaoImpl
+clientDao <|.. clientDaoImpl
+commandeDao <|.. commandeDaoImpl
+utilisateurDao <|.. utilisateurDaoImpl
+
+administrateurDaoImpl --> DaoFactory : 1
+articleDaoImpl --> DaoFactory : 1
+clientDaoImpl --> DaoFactory : 1
+commandeDaoImpl --> DaoFactory : 1
+utilisateurDaoImpl --> DaoFactory : 1
+
+@enduml
+
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+
+

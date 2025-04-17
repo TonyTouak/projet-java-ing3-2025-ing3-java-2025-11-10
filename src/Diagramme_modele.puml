@@ -1,5 +1,10 @@
 @startuml
 
+top to bottom direction
+scale 6.0
+title Diagramme de classe : Modèle
+
+
 abstract class Utilisateur {
     - id : int
     - nom : String

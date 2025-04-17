@@ -1,0 +1,71 @@
+@startuml
+top to bottom direction
+scale 3.0
+skinparam wrapWidth 100
+skinparam classFontSize 10
+skinparam maxMessageSize 30
+title Diagramme de classe : Contrôleur
+
+class articleControleur {
+    - article : Article
+    - vue : articleVue
+    + actionPerformed(e : ActionEvent) : void
+}
+
+class magasinControleur {
+    - vue : magasinVue
+    - dao : articleDaoImpl
+    - articles : ArrayList<Article>
+
+    + appliquerFiltres(type : String, marque : String, prixMax : int) : void
+    + getArticles() : ArrayList<Article>
+}
+
+class panierControleur {
+    - vue : panierVue
+    - panier : Panier
+    - client : Client
+
+    + modifierQuantite(article : Article, delta : int) : void
+    + supprimerArticle(article : Article) : void
+    + viderPanier() : void
+    + validerCommande() : void
+}
+
+magasinControleur --> "1" magasinVue
+magasinControleur --> "1" articleDaoImpl
+magasinControleur --> "*" Article
+panierControleur --> "1" panierVue
+panierControleur --> "1" Panier
+panierControleur ..> "*" Article
+panierControleur ..> "1" Client
+articleControleur --> "1" Article
+articleControleur ..> "1" Client
+
+@enduml
+
+
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
