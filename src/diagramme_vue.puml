@@ -1,6 +1,10 @@
-@startuml VueDiagramme
-title Diagramme des classes Vue
-
+@startuml
+top to bottom direction
+scale 3.0
+skinparam wrapWidth 100
+skinparam classFontSize 10
+skinparam maxMessageSize 30
+title Diagramme de classe : Vue
 
 class accueilVue {
     + accueilVue(Client)
@@ -14,9 +18,21 @@ class adminVue {
 class articleVue {
     - article : Article
     - client : Client
-    + articleVue(Article, Client)
+    - champQuantite : JTextField
+    - labelPrix : JLabel
+    - labelTotal : JLabel
+    - labelTaille : JLabel
+    - comboTaille : JComboBox
+    - boutonAjouter : JButton
+    - boutonRetour : JButton
+    + calculerTotal()
     + ajouterAuPanier()
-    + retour()
+    + chargerTailles()
+    + mettreAJourArticleParTaille()
+    + mettreAJourPrix()
+    + creerImagePanel()
+    + creerInfoPanel()
+    + creerActionsPanel()
 }
 
 class clientVue {
@@ -27,53 +43,68 @@ class clientVue {
 }
 
 class inscriptionVue {
+    - nomField : JTextField
+    - emailField : JTextField
+    - motDePasseField : JPasswordField
+    - adresseField : JTextField
+    - telephoneField : JTextField
     + inscriptionVue()
-    + inscrire()
-    + afficherErreur(String)
+    + creerChamp(label : String, champ : JComponent, gbc : GridBagConstraints, y : int)
+    + validerInscription()
+    + retournerALaConnexion()
 }
 
 class loginVue {
+    - emailField : JTextField
+    - passwordField : JPasswordField
+    - utilisateurDao : utilisateurDao
     + loginVue()
     + seConnecter()
-    + verifierEtRediriger(String, String)
-    + main(String[])
 }
 
 class magasinFemmeVue {
-    - articles : List<Article>
-    - page : int
-    + magasinFemmeVue(Client)
-    + creerVignette(Article)
-    + chargerPage()
-    + precedent()
-    + suivant()
+    - panel_principal : JPanel
+    - filtreType : JComboBox<String>
+    - filtreMarque : JComboBox<String>
+    - filtrePrix : JSlider
+    - client : Client
+    - controleur : magasinControleur
+    + magasinFemmeVue(client : Client)
+    + createFilterPanel() : void
+    + createLabeledComponent(labelText : String, component : JComponent) : JPanel
+    + appliquerFiltres() : void
+    + afficherArticles(articles : ArrayList<Article>) : void
 }
 
 class magasinHommeVue {
-    - articles : List<Article>
-    - page : int
-    + magasinHommeVue(Client)
-    + creerVignette(Article)
-    + chargerPage()
-    + precedent()
-    + suivant()
+    - panel_principal : JPanel
+    - filtreType : JComboBox<String>
+    - filtreMarque : JComboBox<String>
+    - filtrePrix : JSlider
+    - client : Client
+    - controleur : magasinControleur
+    + magasinHommeVue(client : Client)
+    + createFilterPanel() : void
+    + createLabeledComponent(labelText : String, component : JComponent) : JPanel
+    + appliquerFiltres() : void
+    + afficherArticles(articles : ArrayList<Article>) : void
 }
 
-class magasinVue {
-    - articles : List<Article>
-    - page : int
-    + magasinVue(Client)
-    + creerVignette(Article)
-    + chargerPage()
-    + precedent()
-    + suivant()
+interface magasinVue {
+    + afficherArticles(articles : ArrayList<Article>)
+    + appliquerFiltres()
 }
 
 class menuVue {
     - client : Client
     - frame : JFrame
-    + menuVue(Client, JFrame)
+    - panierCountLabel : JLabel
+    - BOUTON_TAILLE : Dimension
     + creerMenuBar() : JMenuBar
+    + actualiserPanier() : void
+    + creerMenuDeroulant(texte : String, font : Font, textColor : Color) : JMenu
+    + creerMenuItem(texte : String, action : Runnable) : JMenuItem
+    + creerBoutonMenu(texte : String, font : Font, textColor : Color, action : Runnable) : JButton
 }
 
 class paiementVue {
@@ -90,10 +121,14 @@ class panierVue {
     - controleur : panierControleur
     - articlesPanel : JPanel
     - totalLabel : JLabel
-    + panierVue(Client, Panier)
-    + mettreAJourAffichage(Panier)
-    + afficherMessage(String)
+    + panierVue(client : Client, panier : Panier)
+    + boutonVue(button : JButton, bgColor : Color) : void
+    + mettreAJourAffichage(panier : Panier) : void
+    + afficherMessage(message : String) : void
 }
+
+magasinFemmeVue ..|> magasinVue
+magasinHommeVue ..|> magasinVue
 
 accueilVue --> menuVue
 adminVue --> menuVue
@@ -101,13 +136,53 @@ articleVue --> menuVue
 clientVue --> menuVue
 inscriptionVue --> menuVue
 loginVue --> menuVue
-magasinFemmeVue --> menuVue
-magasinHommeVue --> menuVue
-magasinVue --> menuVue
-paiementVue --> JFrame
 panierVue --> menuVue
-panierVue --> JPanel
-panierVue --> JLabel
-panierVue --> JButton
+paiementVue --> menuVue
+
+accueilVue "1" --> "1" menuVue
+adminVue "1" --> "1" menuVue
+articleVue "1" --> "1" menuVue
+clientVue "1" --> "1" menuVue
+inscriptionVue "1" --> "1" menuVue
+loginVue "1" --> "1" menuVue
+magasinFemmeVue "1" --> "1" menuVue
+magasinHommeVue "1" --> "1" menuVue
+magasinVue "0..1" --> "1" menuVue
+panierVue "1" --> "1" menuVue
+paiementVue "0..1" --> "1" menuVue
 
 @enduml
+
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+

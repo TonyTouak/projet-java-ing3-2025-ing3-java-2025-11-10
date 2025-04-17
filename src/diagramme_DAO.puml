@@ -1,6 +1,8 @@
 @startuml
 
 title Architecture DAO (méthodes sans getters/setters)
+scale 5.0
+title Diagramme de classe : DAO
 
 ' ===== DAO FACTORY =====
 class DaoFactory {
@@ -53,10 +55,10 @@ clientDao <|.. clientDaoImpl
 commandeDao <|.. commandeDaoImpl
 utilisateurDao <|.. utilisateurDaoImpl
 
-administrateurDaoImpl --> DaoFactory
-articleDaoImpl --> DaoFactory
-clientDaoImpl --> DaoFactory
-commandeDaoImpl --> DaoFactory
-utilisateurDaoImpl --> DaoFactory
+administrateurDaoImpl --> "1" DaoFactory
+articleDaoImpl --> "1" DaoFactory
+clientDaoImpl --> "1" DaoFactory
+commandeDaoImpl --> "1" DaoFactory
+utilisateurDaoImpl --> "1" DaoFactory
 
 @enduml
