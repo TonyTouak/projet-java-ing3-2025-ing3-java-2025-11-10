@@ -1,0 +1,62 @@
+@startuml
+
+title Architecture DAO (méthodes sans getters/setters)
+
+' ===== DAO FACTORY =====
+class DaoFactory {
+    + getConnection() : Connection
+}
+
+' ===== INTERFACES DAO =====
+interface administrateurDao
+interface articleDao
+interface clientDao
+interface commandeDao
+interface utilisateurDao
+
+' ===== IMPLÉMENTATIONS DAO =====
+class administrateurDaoImpl {
+    + chercher(id : int) : Administrateur
+}
+
+class articleDaoImpl {
+    + getAll() : List<Article>
+    + chercher(id : int) : Article
+    + chercherParNom(nom : String) : Article
+    + ajouter(article : Article)
+    + supprimer(article : Article)
+    + modifier(article : Article)
+}
+
+class clientDaoImpl {
+    + chercher(id : int) : Client
+    + chercherParEmail(email : String) : Client
+    + ajouter(client : Client)
+}
+
+class commandeDaoImpl {
+    + getAll() : ArrayList<Commande>
+    + chercher(id : int) : Commande
+    + ajouter(commande : Commande)
+    + supprimer(commande : Commande)
+    + getCommandesParClientID(idClient : int) : List<Commande>
+}
+
+class utilisateurDaoImpl {
+    + chercher(email : String, motDePasse : String) : Utilisateur
+}
+
+' ===== RELATIONS DAO =====
+administrateurDao <|.. administrateurDaoImpl
+articleDao <|.. articleDaoImpl
+clientDao <|.. clientDaoImpl
+commandeDao <|.. commandeDaoImpl
+utilisateurDao <|.. utilisateurDaoImpl
+
+administrateurDaoImpl --> DaoFactory
+articleDaoImpl --> DaoFactory
+clientDaoImpl --> DaoFactory
+commandeDaoImpl --> DaoFactory
+utilisateurDaoImpl --> DaoFactory
+
+@enduml
