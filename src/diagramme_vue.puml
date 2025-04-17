@@ -1,0 +1,113 @@
+@startuml VueDiagramme
+title Diagramme des classes Vue
+
+
+class accueilVue {
+    + accueilVue(Client)
+}
+
+class adminVue {
+    - admin : Administrateur
+    + adminVue(Administrateur)
+}
+
+class articleVue {
+    - article : Article
+    - client : Client
+    + articleVue(Article, Client)
+    + ajouterAuPanier()
+    + retour()
+}
+
+class clientVue {
+    - client : Client
+    + clientVue(Client)
+    + createLabel(String) : JLabel
+    + creerPanelCommande(Commande) : JPanel
+}
+
+class inscriptionVue {
+    + inscriptionVue()
+    + inscrire()
+    + afficherErreur(String)
+}
+
+class loginVue {
+    + loginVue()
+    + seConnecter()
+    + verifierEtRediriger(String, String)
+    + main(String[])
+}
+
+class magasinFemmeVue {
+    - articles : List<Article>
+    - page : int
+    + magasinFemmeVue(Client)
+    + creerVignette(Article)
+    + chargerPage()
+    + precedent()
+    + suivant()
+}
+
+class magasinHommeVue {
+    - articles : List<Article>
+    - page : int
+    + magasinHommeVue(Client)
+    + creerVignette(Article)
+    + chargerPage()
+    + precedent()
+    + suivant()
+}
+
+class magasinVue {
+    - articles : List<Article>
+    - page : int
+    + magasinVue(Client)
+    + creerVignette(Article)
+    + chargerPage()
+    + precedent()
+    + suivant()
+}
+
+class menuVue {
+    - client : Client
+    - frame : JFrame
+    + menuVue(Client, JFrame)
+    + creerMenuBar() : JMenuBar
+}
+
+class paiementVue {
+    - champNomTitulaire : JTextField
+    - champNumeroCarte : JTextField
+    - champDateValidite : JTextField
+    - champCVV : JTextField
+    - boutonValider : JButton
+    + paiementVue()
+    + insererPaiementEnBase(ActionEvent)
+}
+
+class panierVue {
+    - controleur : panierControleur
+    - articlesPanel : JPanel
+    - totalLabel : JLabel
+    + panierVue(Client, Panier)
+    + mettreAJourAffichage(Panier)
+    + afficherMessage(String)
+}
+
+accueilVue --> menuVue
+adminVue --> menuVue
+articleVue --> menuVue
+clientVue --> menuVue
+inscriptionVue --> menuVue
+loginVue --> menuVue
+magasinFemmeVue --> menuVue
+magasinHommeVue --> menuVue
+magasinVue --> menuVue
+paiementVue --> JFrame
+panierVue --> menuVue
+panierVue --> JPanel
+panierVue --> JLabel
+panierVue --> JButton
+
+@enduml
