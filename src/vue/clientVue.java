@@ -1,17 +1,15 @@
 package vue;
 
-import modele.Article;
 import modele.Client;
 import modele.Commande;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.List;
 
 public class clientVue extends JFrame {
 
-    private final Client client;
+    private Client client;
 
     public clientVue(Client client) {
         this.client = client;
@@ -20,12 +18,11 @@ public class clientVue extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(Color.WHITE);
+        getContentPane().setBackground(new Color(255, 255, 255));
 
-        // Menu
-        setJMenuBar(new menuVue(client, this).creerMenuBar());
+        menuVue menuVue = new menuVue(client, this);
+        setJMenuBar(menuVue.creerMenuBar());
 
-        // Header
         JPanel header = new JPanel();
         header.setBackground(new Color(30, 144, 255));
         header.setPreferredSize(new Dimension(1000, 80));
@@ -35,13 +32,11 @@ public class clientVue extends JFrame {
         header.add(bienvenue);
         add(header, BorderLayout.NORTH);
 
-        // Contenu principal
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(new Color(255, 255, 255));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        // Infos client
         contentPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
         contentPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
         contentPanel.add(createLabel("📍 Adresse : " + client.getAdresse()));
@@ -50,7 +45,6 @@ public class clientVue extends JFrame {
 
         contentPanel.add(Box.createVerticalStrut(30));
 
-        // Commandes
         JLabel titreCommandes = new JLabel("🧾 Commandes passées :");
         titreCommandes.setFont(new Font("SansSerif", Font.BOLD, 18));
         contentPanel.add(titreCommandes);
@@ -58,7 +52,11 @@ public class clientVue extends JFrame {
         List<Commande> commandes = client.getCommandes();
         if (commandes != null && !commandes.isEmpty()) {
             for (Commande commande : commandes) {
-                contentPanel.add(creerPanelCommande(commande));
+                String texteCommande = "- Commande #" + commande.getId() +
+                        " du " + commande.getDate() +
+                        " | " + commande.getPrix() + " €" +
+                        " x " + commande.getQuantite();
+                contentPanel.add(createLabel(texteCommande));
             }
         } else {
             contentPanel.add(createLabel("Aucune commande passée."));
@@ -66,7 +64,6 @@ public class clientVue extends JFrame {
 
         contentPanel.add(Box.createVerticalStrut(30));
 
-        // Déconnexion
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDeconnexion.setBackground(new Color(30, 144, 255));
@@ -79,7 +76,6 @@ public class clientVue extends JFrame {
         contentPanel.add(btnDeconnexion);
         contentPanel.add(Box.createVerticalStrut(20));
 
-        // Scroll
         JScrollPane scroll = new JScrollPane(contentPanel);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);

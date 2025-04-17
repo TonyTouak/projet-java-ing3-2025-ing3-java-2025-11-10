@@ -1,18 +1,32 @@
 package dao;
 
+import modele.Article;
+import modele.Client;
 import modele.Commande;
+import modele.Panier;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
 
 public interface commandeDao {
-    ArrayList<Commande> getAll();
+    public ArrayList<Commande> getAll() throws SQLException;
 
-    void ajouter(Commande commande);
+    int ajouter(Commande commande)throws SQLException ;
 
-    Commande chercher(int idCommande);
+    Commande chercher(int idCommande) throws SQLException;
 
-    void supprimer(Commande commande);
+    void supprimer(Commande commande) throws SQLException;
+
+    boolean validerCommandeComplete(Client client, Map<Article, Integer> articlesPanier);
+
+    void finaliserCommande(Client client, Panier panier, articleCommandeDao articleCmdDao, articleDao articleDao);
+
+    Commande creerCommandeDepuisResultSet(ResultSet rs) throws SQLException;
+
+    int creerNouvelleCommande(int idClient, float prixTotal) throws SQLException;
 
     List<Commande> getCommandesParClientID(int idClient);
 }

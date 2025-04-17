@@ -30,7 +30,7 @@ public class articleControleur implements ActionListener {
                 return;
             }
 
-            double prixTotal = article.calculerPrix(quantite);
+            float prixTotal = article.calculerPrix(quantite);
 
             Panier panier = Panier.getInstance();
             panier.ajouterArticle(article, quantite, prixTotal);

@@ -103,8 +103,4 @@ public class loginVue extends JFrame {
         }
         dispose();
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(loginVue::new);
-    }
 }
