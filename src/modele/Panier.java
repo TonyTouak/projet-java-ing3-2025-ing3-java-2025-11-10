@@ -6,11 +6,11 @@ import java.util.Map;
 public class Panier {
     private static Panier instance;
     private Map<Article, Integer> articles;
-    private double total;
+    private float total;
 
     private Panier() {
         articles = new HashMap<>();
-        total = 0.0;
+        total = 0.0F;
     }
 
     public static Panier getInstance() {
@@ -58,7 +58,7 @@ public class Panier {
 
     public void vider() {
         articles.clear();
-        total = 0.0;
+        total = 0.0F;
     }
 
     public Map<Article, Integer> getArticles() {
@@ -73,7 +73,7 @@ public class Panier {
         return articles.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public double getTotal() {
+    public float getTotal() {
         return total;
     }
 

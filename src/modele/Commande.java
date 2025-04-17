@@ -5,19 +5,21 @@ import java.util.Date;
 public class Commande {
     private int id;
     private Client client;
-    private Article article;
     private Date date;
-    private double prixFinal;
+    private float prix;
     private int quantite;
 
-    public Commande(int id, Client client, Article article, Date date, double prixFinal, int quantite) {
+    public Commande(int id, Client client, Date date, float prix, int quantite) {
         this.id = id;
         this.client = client;
-        this.article = article;
         this.date = date;
-        this.prixFinal = prixFinal;
+        this.prix = prix;
         this.quantite = quantite;
     }
+
+    public Commande() {
+    }
+
     public int getId() {
         return id;
     }
@@ -26,16 +28,12 @@ public class Commande {
         return client;
     }
 
-    public Article getArticle() {
-        return article;
-    }
-
     public Date getDate() {
         return date;
     }
 
-    public double getPrixFinal() {
-        return prixFinal;
+    public float getPrix() {
+        return prix;
     }
 
     public int getQuantite() {
@@ -44,5 +42,21 @@ public class Commande {
 
     public void setId(int anInt) {
         this.id = anInt;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setPrix(float v) {
+        this.prix = v;
+    }
+
+    public void setQuantite(int i) {
+        this.quantite = i;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

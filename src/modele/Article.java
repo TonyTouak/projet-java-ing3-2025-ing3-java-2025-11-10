@@ -78,15 +78,15 @@ public class Article {
      * @param quantite = la quantité achetée
      * @return : Le prix total de la commande
      */
-    public double calculerPrix(int quantite) {
+    public float calculerPrix(int quantite) {
         if(quantiteVrac != 0) {
             int paquet, quantiteUnique;
             paquet = quantite / quantiteVrac;
             quantiteUnique = quantite % quantiteVrac;
-            return (paquet * prixVrac) + (quantiteUnique * prixUnique);
+            return (float) ((paquet * prixVrac) + (quantiteUnique * prixUnique));
         }
         else {
-            return (prixUnique * quantite);
+            return (float) (prixUnique * quantite);
         }
     }
 

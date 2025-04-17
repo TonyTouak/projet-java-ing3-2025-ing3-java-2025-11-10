@@ -32,13 +32,11 @@ public class clientVue extends JFrame {
         header.add(bienvenue);
         add(header, BorderLayout.NORTH);
 
-        // Wrapper principal scrollable
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(new Color(255, 255, 255));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        // Infos client
         contentPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
         contentPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
         contentPanel.add(createLabel("📍 Adresse : " + client.getAdresse()));
@@ -47,7 +45,6 @@ public class clientVue extends JFrame {
 
         contentPanel.add(Box.createVerticalStrut(30));
 
-        // Commandes
         JLabel titreCommandes = new JLabel("🧾 Commandes passées :");
         titreCommandes.setFont(new Font("SansSerif", Font.BOLD, 18));
         contentPanel.add(titreCommandes);
@@ -57,7 +54,7 @@ public class clientVue extends JFrame {
             for (Commande commande : commandes) {
                 String texteCommande = "- Commande #" + commande.getId() +
                         " du " + commande.getDate() +
-                        " | " + commande.getPrixFinal() + " €" +
+                        " | " + commande.getPrix() + " €" +
                         " x " + commande.getQuantite();
                 contentPanel.add(createLabel(texteCommande));
             }
@@ -67,7 +64,6 @@ public class clientVue extends JFrame {
 
         contentPanel.add(Box.createVerticalStrut(30));
 
-        // Bouton déconnexion (tout en bas)
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDeconnexion.setBackground(new Color(30, 144, 255));

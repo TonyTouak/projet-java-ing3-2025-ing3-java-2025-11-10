@@ -1,102 +1,192 @@
 package vue;
 
+import controleur.paiementControleur;
+import dao.DaoFactory;
+import dao.paiementDaoImpl;
+import modele.Client;
+import modele.Paiement;
+import modele.Panier;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class paiementVue extends JFrame {
-
     private JTextField champNomTitulaire;
     private JTextField champNumeroCarte;
     private JTextField champDateValidite;
     private JTextField champCVV;
-    private JButton boutonValider;
+    private JCheckBox caseEnregistrerCarte;
+    private JButton boutonPayer;
+    private JPanel cartesPanel;
+    private ButtonGroup groupeCartes;
+    private float montantTotal;
+    private Client client;
+    private Panier panier;
+    private paiementControleur controleur;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
+    private final Consumer<Boolean> callback;
 
-    public paiementVue() {
-        setTitle("Paiement");
-        setSize(450, 320);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 🟦 Bande bleue en haut
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 25));
-        headerPanel.setBackground(new Color(30, 144, 255));
-        headerPanel.setPreferredSize(new Dimension(0, 80));
+    public paiementVue(Client client, Panier panier, float montantTotal, Consumer<Boolean> callback) {
+        this.client = client;
+        this.panier = panier;
+        this.montantTotal = montantTotal;
+        this.callback = callback;
 
-        JLabel titleLabel = new JLabel("Paiement sécurisé");
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
-        headerPanel.add(titleLabel);
 
-        // 🟫 Zone centrale
-        JPanel contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(new Color(255, 255, 255));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
 
-        champNomTitulaire = new JTextField();
-        champNumeroCarte = new JTextField();
-        champDateValidite = new JTextField(); // MM/AA
-        champCVV = new JTextField();
-        boutonValider = new JButton("Valider le paiement");
+        this.controleur = new paiementControleur(
+                this,
+                new paiementDaoImpl(DaoFactory.getInstance("shopping", "root", "")),
+                client,
+                panier
+        );
 
-        // Champs
-        contentPanel.add(new JLabel("Nom du titulaire :"), gbc); gbc.gridy++;
-        contentPanel.add(champNomTitulaire, gbc); gbc.gridy++;
-
-        contentPanel.add(new JLabel("Numéro de carte :"), gbc); gbc.gridy++;
-        contentPanel.add(champNumeroCarte, gbc); gbc.gridy++;
-
-        contentPanel.add(new JLabel("Date de validité (MM/AA) :"), gbc); gbc.gridy++;
-        contentPanel.add(champDateValidite, gbc); gbc.gridy++;
-
-        contentPanel.add(new JLabel("CVV :"), gbc); gbc.gridy++;
-        contentPanel.add(champCVV, gbc); gbc.gridy++;
-
-        gbc.anchor = GridBagConstraints.CENTER;
-        contentPanel.add(boutonValider, gbc);
-
-        // Mise en page
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(headerPanel, BorderLayout.NORTH);
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
-
-        // Action sur le bouton
-        boutonValider.addActionListener(this::insererPaiementEnBase);
-
-        setVisible(true);
+        configurerUI();
+        chargerCartesEnregistrees();
     }
 
-    private void insererPaiementEnBase(ActionEvent e) {
-        String nomTitulaire = champNomTitulaire.getText();
-        String numeroCarte = champNumeroCarte.getText();
-        String dateValidite = champDateValidite.getText();
-        String cvv = champCVV.getText();
+    private void configurerUI() {
+        setTitle("Paiement sécurisé");
+        setSize(600, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/shopping", "root", "");
-             PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO paiement (numero_carte, date_validite, cvv, nom_carte) VALUES (?, ?, ?, ?)")) {
+        JPanel header = new JPanel();
+        header.setBackground(new Color(30, 144, 255));
+        header.setPreferredSize(new Dimension(0, 80));
+        JLabel titre = new JLabel("Paiement - " + String.format("%.2f€", montantTotal));
+        titre.setForeground(Color.WHITE);
+        titre.setFont(new Font("SansSerif", Font.BOLD, 20));
+        header.add(titre);
+        add(header, BorderLayout.NORTH);
 
-            stmt.setString(1, numeroCarte);
-            stmt.setString(2, dateValidite);
-            stmt.setString(3, cvv);
-            stmt.setString(4, nomTitulaire); // Ce champ est affiché comme "Nom du titulaire"
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            stmt.executeUpdate();
+        cartesPanel = new JPanel();
+        cartesPanel.setLayout(new BoxLayout(cartesPanel, BoxLayout.Y_AXIS));
+        groupeCartes = new ButtonGroup();
 
-            JOptionPane.showMessageDialog(this, "Paiement enregistré avec succès !");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erreur lors de l'enregistrement du paiement.");
+        JPanel newCardPanel = new JPanel();
+        newCardPanel.setLayout(new BoxLayout(newCardPanel, BoxLayout.Y_AXIS));
+        newCardPanel.setBorder(BorderFactory.createTitledBorder("Nouvelle carte"));
+
+        champNomTitulaire = new JTextField(20);
+        champNumeroCarte = new JTextField(20);
+        champDateValidite = new JTextField(5);
+        champCVV = new JTextField(3);
+        caseEnregistrerCarte = new JCheckBox("Enregistrer cette carte");
+
+        newCardPanel.add(creerChamp("Nom titulaire:", champNomTitulaire));
+        newCardPanel.add(creerChamp("Numéro:", champNumeroCarte));
+        newCardPanel.add(creerChamp("Expiration (MM/AA):", champDateValidite));
+        newCardPanel.add(creerChamp("CVV:", champCVV));
+        newCardPanel.add(caseEnregistrerCarte);
+
+        boutonPayer = new JButton("Payer maintenant");
+        boutonPayer.setBackground(new Color(30, 144, 255));
+        boutonPayer.setForeground(Color.WHITE);
+        boutonPayer.addActionListener(e -> validerPaiement());
+
+        content.add(cartesPanel);
+        content.add(Box.createVerticalStrut(20));
+        content.add(newCardPanel);
+        content.add(Box.createVerticalStrut(20));
+        content.add(boutonPayer);
+
+        add(content, BorderLayout.CENTER);
+    }
+
+    private JPanel creerChamp(String label, JComponent field) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.add(new JLabel(label));
+        field.setPreferredSize(new Dimension(200, 25));
+        panel.add(field);
+        return panel;
+    }
+
+    private void chargerCartesEnregistrees() {
+        cartesPanel.removeAll();
+        List<Paiement> cartes = controleur.getCartesClient();
+
+        if (!cartes.isEmpty()) {
+            cartesPanel.setBorder(BorderFactory.createTitledBorder("Mes cartes"));
+
+            for (Paiement carte : cartes) {
+                JPanel cardPanel = new JPanel(new BorderLayout());
+                JRadioButton radio = new JRadioButton(
+                        carte.getNomCarte() + " - ****" + carte.getNumero() % 10000
+                );
+                radio.setActionCommand(String.valueOf(carte.getNumero()));
+                groupeCartes.add(radio);
+
+                JLabel details = new JLabel(
+                        "Exp: " + dateFormat.format(carte.getDateValidite()) +
+                                " | Solde: " + carte.getSolde() + "€"
+                );
+
+                cardPanel.add(radio, BorderLayout.WEST);
+                cardPanel.add(details, BorderLayout.CENTER);
+                cartesPanel.add(cardPanel);
+            }
+
+            cartesPanel.add(Box.createVerticalStrut(10));
+            cartesPanel.add(creerChamp("CVV:", champCVV));
+        } else {
+            cartesPanel.setVisible(false);
+        }
+
+        cartesPanel.revalidate();
+        cartesPanel.repaint();
+    }
+
+    public void validerPaiement() {
+        try {
+            if (groupeCartes.getSelection() != null) {
+                int numeroCarte = Integer.parseInt(groupeCartes.getSelection().getActionCommand());
+                int cvv = Integer.parseInt(champCVV.getText());
+                controleur.traiterPaiementAvecCarteExistante(numeroCarte, cvv, montantTotal);
+            } else {
+                Paiement nouvelleCarte = new Paiement(
+                        champNomTitulaire.getText(),
+                        Integer.parseInt(champNumeroCarte.getText()),
+                        dateFormat.parse(champDateValidite.getText()),
+                        Integer.parseInt(champCVV.getText()),
+                        1000.0f
+                );
+                controleur.traiterPaiementAvecNouvelleCarte(
+                        nouvelleCarte,
+                        caseEnregistrerCarte.isSelected(),
+                        montantTotal
+                );
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erreur: " + e.getMessage(),
+                    "Erreur de paiement",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(paiementVue::new);
+    public void afficherCartes(List<Paiement> cartes) {
+        JOptionPane.showMessageDialog(this, "Aucune carte enregistrée");
     }
+
+    public void afficherErreur(String message) {
+        JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void paiementReussi() {
+        JOptionPane.showMessageDialog(this, "Paiement effectué avec succès !");
+        this.callback.accept(true);
+        this.dispose();
+    }
+
+
 }

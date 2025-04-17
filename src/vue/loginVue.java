@@ -144,8 +144,4 @@ public class loginVue extends JFrame {
             JOptionPane.showMessageDialog(null, "Identifiants incorrects !");
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(loginVue::new);
-    }
 }

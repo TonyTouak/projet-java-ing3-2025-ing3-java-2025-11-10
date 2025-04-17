@@ -391,5 +391,52 @@ public class articleDaoImpl implements articleDao {
                 result.getInt("quantite")
                 );
     }
+
+    @Override
+    public void mettreAJour(Article article) throws SQLException {
+        String sql = "UPDATE article SET quantite = ? WHERE IDArticle = ?";
+        try (Connection conn = daoFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, article.getQuantite());
+            stmt.setInt(2, article.getId());
+
+            stmt.executeUpdate();
+        }
+    }
+
+
+    @Override
+    public boolean decrementerStock(Connection connection, int idArticle, int quantite) throws SQLException {
+        String sql = "UPDATE article SET quantite = quantite - ? WHERE IDArticle = ? AND quantite >= ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, quantite);
+            ps.setInt(2, idArticle);
+            ps.setInt(3, quantite);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+
+    @Override
+    public boolean verifierStock(int idArticle, int quantite) {
+        String sql = "SELECT quantite FROM article WHERE IDArticle = ?";
+
+        try (Connection connection = daoFactory.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, idArticle);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("quantite") >= quantite;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur vérification stock: " + e.getMessage());
+        }
+        return false;
+    }
 }
 

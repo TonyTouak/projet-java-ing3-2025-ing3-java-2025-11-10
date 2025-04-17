@@ -2,6 +2,8 @@ package dao;
 
 import modele.Article;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,4 +21,10 @@ public interface articleDao {
     List<Article> getVariantesParArticle(String marque, String type, String sexe, String nom);
 
     Article getArticleParAttributsEtTaille(String marque, String type, String sexe, String nom, String taille);
+
+    void mettreAJour(Article article) throws SQLException;
+
+    boolean decrementerStock(Connection connection, int idArticle, int quantite) throws SQLException;
+
+    boolean verifierStock(int idArticle, int quantite);
 }

@@ -8,8 +8,8 @@ public class DaoFactory {
      * Attributs privés pour la connexion JDBC
      */
     private static String url;
-    private String username;
-    private String password;
+    private static String username;
+    private static String password;
 
     public DaoFactory(String url, String username, String password) {
         this.url = url;
@@ -45,7 +45,7 @@ public class DaoFactory {
      * @return : une connexion à la base de données
      * @throws SQLException
      */
-    public Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         // Retourner la connexion du driver à la base de données
         return DriverManager.getConnection(url, username, password);
     }
