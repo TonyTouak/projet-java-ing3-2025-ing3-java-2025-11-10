@@ -1,0 +1,107 @@
+@startuml
+
+title Architecture Modèle + DAO
+
+' ===== CLASSES MÉTIER =====
+abstract class Utilisateur {
+    - id : int
+    - nom : String
+    - email : String
+    - motDePasse : String
+}
+
+class Administrateur {
+    + Administrateur(id, nom, email, motDePasse)
+}
+
+class Client {
+    - idClient : int
+    - adresse : String
+    - telephone : String
+    - commandes : List<Commande>
+    + ajouterCommande(commande : Commande)
+}
+
+class Article {
+    - id : int
+    - prixUnique : double
+    - prixVrac : double
+    - marque : String
+    - quantiteVrac : int
+    - taille : String
+    - type : String
+    - nom : String
+    - image : String
+    - sexe : String
+    - quantite : int
+    + calculerPrix(quantite : int) : double
+}
+
+class Commande {
+    - id : int
+    - client : Client
+    - article : Article
+    - date : Date
+    - prixFinal : double
+    - quantite : int
+}
+
+class Panier {
+    - articles : Map<Article, Integer>
+    - total : double
+    + ajouterArticle(article : Article, quantite : int)
+    + modifierQuantite(article : Article, nouvelleQuantite : int)
+    + supprimerArticle(article : Article)
+    + vider()
+    + estVide() : boolean
+}
+
+' ===== DAO FACTORY =====
+class DaoFactory {
+    + getConnection() : Connection
+}
+
+' ===== INTERFACES DAO =====
+interface administrateurDao
+interface articleDao
+interface clientDao
+interface commandeDao
+interface utilisateurDao
+
+' ===== IMPLÉMENTATIONS DAO =====
+class administrateurDaoImpl
+class articleDaoImpl
+class clientDaoImpl
+class commandeDaoImpl
+class utilisateurDaoImpl
+
+' ===== RELATIONS MÉTIER =====
+Utilisateur <|-- Administrateur
+Utilisateur <|-- Client
+Client "1" o-- "*" Commande
+Commande "*" --> "1" Article
+Panier "1" --> "*" Article
+
+' ===== RELATIONS DAO =====
+administrateurDao <|.. administrateurDaoImpl
+articleDao <|.. articleDaoImpl
+clientDao <|.. clientDaoImpl
+commandeDao <|.. commandeDaoImpl
+utilisateurDao <|.. utilisateurDaoImpl
+
+administrateurDaoImpl --> DaoFactory
+articleDaoImpl --> DaoFactory
+clientDaoImpl --> DaoFactory
+commandeDaoImpl --> DaoFactory
+utilisateurDaoImpl --> DaoFactory
+
+commandeDaoImpl --> Article
+commandeDaoImpl --> Client
+commandeDaoImpl --> Commande
+
+clientDaoImpl --> Client
+articleDaoImpl --> Article
+utilisateurDaoImpl --> Utilisateur
+administrateurDaoImpl --> Administrateur
+
+@enduml
