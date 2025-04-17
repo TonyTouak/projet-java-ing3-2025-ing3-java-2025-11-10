@@ -92,4 +92,42 @@ public class clientVue extends JFrame {
         label.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         return label;
     }
+
+    private JPanel creerPanelCommande(Commande commande) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+
+        Article article = commande.getArticle();
+
+        // Affichage image (Images/nomFichier.png)
+        String imagePath = "Images/" + article.getImage(); // ex: Images/brassiere.png
+        File imageFile = new File(imagePath);
+        if (imageFile.exists()) {
+            ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
+            Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            JLabel imgLabel = new JLabel(new ImageIcon(scaled));
+            imgLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.add(imgLabel);
+        } else {
+            panel.add(createLabel("[Image introuvable]"));
+        }
+
+        // Nom article
+        JLabel nomArticle = new JLabel(article.getNom());
+        nomArticle.setFont(new Font("SansSerif", Font.BOLD, 16));
+        nomArticle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(nomArticle);
+
+        // Détail commande
+        String details = "Commande du " + commande.getDate() +
+                " | " + commande.getPrixFinal() + " €" +
+                " x " + commande.getQuantite();
+        JLabel infos = createLabel(details);
+        infos.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(infos);
+
+        return panel;
+    }
 }

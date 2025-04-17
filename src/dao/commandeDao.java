@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 
 public interface commandeDao {
     public ArrayList<Commande> getAll() throws SQLException;
@@ -21,11 +22,11 @@ public interface commandeDao {
 
     boolean validerCommandeComplete(Client client, Map<Article, Integer> articlesPanier);
 
-
     void finaliserCommande(Client client, Panier panier, articleCommandeDao articleCmdDao, articleDao articleDao);
 
     Commande creerCommandeDepuisResultSet(ResultSet rs) throws SQLException;
 
     int creerNouvelleCommande(int idClient, float prixTotal) throws SQLException;
 
+    List<Commande> getCommandesParClientID(int idClient);
 }

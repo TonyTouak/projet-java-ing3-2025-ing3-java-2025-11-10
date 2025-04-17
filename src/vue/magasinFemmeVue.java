@@ -16,6 +16,7 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     private JPanel panel_principal;
     private JComboBox<String> filtreType, filtreMarque;
     private JSlider filtrePrix;
+    private JTextField champRecherche;
     private Client client;
     private magasinControleur controleur;
 
@@ -88,13 +89,24 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         filtrePrix.setBackground(new Color(240, 240, 240));
         filterPanel.add(createLabeledComponent("Prix maximum :", filtrePrix));
 
+        champRecherche = new JTextField();
+        champRecherche.setMaximumSize(new Dimension(200, 30));
+        filterPanel.add(createLabeledComponent("Recherche :", champRecherche));
+
         JButton appliquerBouton = new JButton("Appliquer");
         appliquerBouton.setFont(new Font("SansSerif", Font.BOLD, 14));
         appliquerBouton.setBackground(new Color(255, 105, 180));
         appliquerBouton.setForeground(Color.WHITE);
         appliquerBouton.setFocusPainted(false);
         appliquerBouton.setMaximumSize(new Dimension(200, 40));
-        appliquerBouton.addActionListener(e -> appliquerFiltres());
+        appliquerBouton.addActionListener(e -> {
+            if (!champRecherche.getText().trim().isEmpty()) {
+                controleur.appliquerRecherche(champRecherche.getText().trim());
+            } else {
+                appliquerFiltres();
+            }
+        });
+
         filterPanel.add(Box.createVerticalStrut(15));
         filterPanel.add(appliquerBouton);
 
@@ -128,14 +140,10 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     @Override
     public void afficherArticles(ArrayList<Article> articles) {
         panel_principal.removeAll();
-
         Set<String> imagesAffichees = new HashSet<>();
 
         for (Article article : articles) {
-            if (imagesAffichees.contains(article.getImage())) {
-                continue;
-            }
-
+            if (imagesAffichees.contains(article.getImage())) continue;
             imagesAffichees.add(article.getImage());
 
             JPanel panel = new JPanel();
@@ -173,6 +181,7 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
 
             panel_principal.add(panel);
         }
+
         panel_principal.revalidate();
         panel_principal.repaint();
     }

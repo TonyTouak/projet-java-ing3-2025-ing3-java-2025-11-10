@@ -1,0 +1,168 @@
+@startuml
+top to bottom direction
+scale 3.0
+skinparam wrapWidth 100
+skinparam classFontSize 10
+skinparam maxMessageSize 30
+title Diagramme de classe : Vue
+
+class accueilVue {
+    + accueilVue(Client)
+}
+
+class adminVue {
+    - admin : Administrateur
+    + adminVue(Administrateur)
+}
+
+class articleVue {
+    - article : Article
+    - client : Client
+    - champQuantite : JTextField
+    - labelPrix : JLabel
+    - labelTotal : JLabel
+    - labelTaille : JLabel
+    - comboTaille : JComboBox
+    - boutonAjouter : JButton
+    - boutonRetour : JButton
+    + calculerTotal()
+    + ajouterAuPanier()
+    + chargerTailles()
+    + mettreAJourArticleParTaille()
+    + mettreAJourPrix()
+    + creerImagePanel()
+    + creerInfoPanel()
+    + creerActionsPanel()
+}
+
+class clientVue {
+    - client : Client
+    + clientVue(Client)
+    + createLabel(String) : JLabel
+    + creerPanelCommande(Commande) : JPanel
+}
+
+class inscriptionVue {
+    - nomField : JTextField
+    - emailField : JTextField
+    - motDePasseField : JPasswordField
+    - adresseField : JTextField
+    - telephoneField : JTextField
+    + inscriptionVue()
+    + creerChamp(label : String, champ : JComponent, gbc : GridBagConstraints, y : int)
+    + validerInscription()
+    + retournerALaConnexion()
+}
+
+class loginVue {
+    - emailField : JTextField
+    - passwordField : JPasswordField
+    - utilisateurDao : utilisateurDao
+    + loginVue()
+    + seConnecter()
+}
+
+class magasinFemmeVue {
+    - panel_principal : JPanel
+    - filtreType : JComboBox<String>
+    - filtreMarque : JComboBox<String>
+    - filtrePrix : JSlider
+    - client : Client
+    - controleur : magasinControleur
+    + magasinFemmeVue(client : Client)
+    + createFilterPanel() : void
+    + createLabeledComponent(labelText : String, component : JComponent) : JPanel
+    + appliquerFiltres() : void
+    + afficherArticles(articles : ArrayList<Article>) : void
+}
+
+class magasinHommeVue {
+    - panel_principal : JPanel
+    - filtreType : JComboBox<String>
+    - filtreMarque : JComboBox<String>
+    - filtrePrix : JSlider
+    - client : Client
+    - controleur : magasinControleur
+    + magasinHommeVue(client : Client)
+    + createFilterPanel() : void
+    + createLabeledComponent(labelText : String, component : JComponent) : JPanel
+    + appliquerFiltres() : void
+    + afficherArticles(articles : ArrayList<Article>) : void
+}
+
+interface magasinVue {
+    + afficherArticles(articles : ArrayList<Article>)
+    + appliquerFiltres()
+}
+
+class menuVue {
+    - client : Client
+    - frame : JFrame
+    - panierCountLabel : JLabel
+    - BOUTON_TAILLE : Dimension
+    + creerMenuBar() : JMenuBar
+    + actualiserPanier() : void
+    + creerMenuDeroulant(texte : String, font : Font, textColor : Color) : JMenu
+    + creerMenuItem(texte : String, action : Runnable) : JMenuItem
+    + creerBoutonMenu(texte : String, font : Font, textColor : Color, action : Runnable) : JButton
+}
+
+class paiementVue {
+    - champNomTitulaire : JTextField
+    - champNumeroCarte : JTextField
+    - champDateValidite : JTextField
+    - champCVV : JTextField
+    - boutonValider : JButton
+    + paiementVue()
+    + insererPaiementEnBase(ActionEvent)
+}
+
+class panierVue {
+    - controleur : panierControleur
+    - articlesPanel : JPanel
+    - totalLabel : JLabel
+    + panierVue(client : Client, panier : Panier)
+    + boutonVue(button : JButton, bgColor : Color) : void
+    + mettreAJourAffichage(panier : Panier) : void
+    + afficherMessage(message : String) : void
+}
+
+magasinFemmeVue ..|> magasinVue
+magasinHommeVue ..|> magasinVue
+
+accueilVue --> menuVue
+adminVue --> menuVue
+articleVue --> menuVue
+clientVue --> menuVue
+inscriptionVue --> menuVue
+loginVue --> menuVue
+panierVue --> menuVue
+paiementVue --> menuVue
+
+accueilVue "1" --> "1" menuVue
+adminVue "1" --> "1" menuVue
+articleVue "1" --> "1" menuVue
+clientVue "1" --> "1" menuVue
+inscriptionVue "1" --> "1" menuVue
+loginVue "1" --> "1" menuVue
+magasinFemmeVue "1" --> "1" menuVue
+magasinHommeVue "1" --> "1" menuVue
+magasinVue "0..1" --> "1" menuVue
+panierVue "1" --> "1" menuVue
+paiementVue "0..1" --> "1" menuVue
+
+@enduml
+
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+' ===
+

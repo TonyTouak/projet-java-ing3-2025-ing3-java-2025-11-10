@@ -1,0 +1,67 @@
+@startuml
+
+top to bottom direction
+scale 6.0
+title Diagramme de classe : Modèle
+
+
+abstract class Utilisateur {
+    - id : int
+    - nom : String
+    - email : String
+    - motDePasse : String
+}
+
+class Administrateur {
+    + Administrateur(id, nom, email, motDePasse)
+}
+
+class Client {
+    - idClient : int
+    - adresse : String
+    - telephone : String
+    - commandes : List<Commande>
+    + ajouterCommande(commande : Commande)
+}
+
+class Article {
+    - id : int
+    - prixUnique : double
+    - prixVrac : double
+    - marque : String
+    - quantiteVrac : int
+    - taille : String
+    - type : String
+    - nom : String
+    - image : String
+    - sexe : String
+    - quantite : int
+    + calculerPrix(quantite : int) : double
+}
+
+class Commande {
+    - id : int
+    - client : Client
+    - article : Article
+    - date : Date
+    - prixFinal : double
+    - quantite : int
+}
+
+class Panier {
+    - articles : Map<Article, Integer>
+    - total : double
+    + ajouterArticle(article : Article, quantite : int)
+    + modifierQuantite(article : Article, nouvelleQuantite : int)
+    + supprimerArticle(article : Article)
+    + vider()
+    + estVide() : boolean
+}
+
+Utilisateur <|-- Administrateur
+Utilisateur <|-- Client
+Client "1" o-- "*" Commande
+Commande "*" --> "1" Article
+Panier "1" --> "*" Article
+
+@enduml

@@ -5,6 +5,7 @@ import modele.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class commandeDaoImpl implements commandeDao {
@@ -248,5 +249,72 @@ public class commandeDaoImpl implements commandeDao {
         return articlesPanier.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    @Override
+    public List<Commande> getCommandesParClientID(int idClient) {
+        List<Commande> commandes = new ArrayList<>();
+        String query = "SELECT * FROM commande WHERE IDClient = ?";
+
+        try (Connection connexion = daoFactory.getConnection();
+             PreparedStatement ps = connexion.prepareStatement(query)) {
+
+            ps.setInt(1, idClient);
+            ResultSet rs = ps.executeQuery();
+
+            Client client = new clientDaoImpl(daoFactory).chercher(idClient);
+
+            while (rs.next()) {
+                int idCommande = rs.getInt("IDCommande");
+                Date date = rs.getDate("date");
+                float prix = rs.getFloat("prix");
+
+                List<Article> articles = getArticlesParCommande(idCommande);
+
+                for (Article article : articles) {
+                    commandes.add(new Commande(idCommande, client, date, prix, 1));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Erreur dans getCommandesParClientID()");
+        }
+
+        return commandes;
+    }
+
+    private List<Article> getArticlesParCommande(int idCommande) {
+        List<Article> articles = new ArrayList<>();
+        String query = "SELECT a.* FROM articlecommande ac " +
+                "JOIN article a ON ac.IDArticle = a.IDArticle " +
+                "WHERE ac.IDCommande = ?";
+
+        try (Connection connexion = daoFactory.getConnection();
+             PreparedStatement ps = connexion.prepareStatement(query)) {
+
+            ps.setInt(1, idCommande);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Article article = new Article(
+                        rs.getInt("IDArticle"),
+                        rs.getDouble("prix_unique"),
+                        rs.getDouble("prix_vrac"),
+                        rs.getString("marque"),
+                        rs.getInt("quantite_vrac"),
+                        rs.getString("taille"),
+                        rs.getString("type"),
+                        rs.getString("nom"),
+                        rs.getString("image"),
+                        rs.getString("sexe"),
+                        rs.getInt("quantite")
+                );
+                articles.add(article);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Erreur dans getArticlesParCommande()");
+        }
+
+        return articles;
+    }
 
 }
