@@ -16,6 +16,7 @@ public class magasinHommeVue extends JFrame implements magasinVue {
     private JPanel panel_principal;
     private JComboBox<String> filtreType, filtreMarque;
     private JSlider filtrePrix;
+    private JTextField barreRecherche;
     private Client client;
     private magasinControleur controleur;
 
@@ -70,6 +71,12 @@ public class magasinHommeVue extends JFrame implements magasinVue {
         filterTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         filterPanel.add(filterTitle);
         filterPanel.add(Box.createVerticalStrut(20));
+
+        barreRecherche = new JTextField();
+        barreRecherche.setMaximumSize(new Dimension(200, 30));
+        barreRecherche.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        barreRecherche.addActionListener(e -> controleur.appliquerRecherche(barreRecherche.getText()));
+        filterPanel.add(createLabeledComponent("Rechercher :", barreRecherche));
 
         filtreType = new JComboBox<>(new String[]{"Tous", "Chaussures", "T-shirt", "Short", "Veste", "Chausettes", "Bas de Survêtement", "Maillot"});
         filtreType.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -128,14 +135,10 @@ public class magasinHommeVue extends JFrame implements magasinVue {
     @Override
     public void afficherArticles(ArrayList<Article> articles) {
         panel_principal.removeAll();
-
         Set<String> imagesAffichees = new HashSet<>();
 
         for (Article article : articles) {
-            if (imagesAffichees.contains(article.getImage())) {
-                continue;
-            }
-
+            if (imagesAffichees.contains(article.getImage())) continue;
             imagesAffichees.add(article.getImage());
 
             JPanel panel = new JPanel();
@@ -173,6 +176,7 @@ public class magasinHommeVue extends JFrame implements magasinVue {
 
             panel_principal.add(panel);
         }
+
         panel_principal.revalidate();
         panel_principal.repaint();
     }
