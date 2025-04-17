@@ -9,13 +9,15 @@ import java.util.stream.Collectors;
 
 public class magasinControleur {
 
-    private magasinVue vue; // Utilise l'interface magasinVue
+    private magasinVue vue;
     private articleDaoImpl dao;
     private ArrayList<Article> articles;
+    private String sexe; // ✅ AJOUT du champ sexe
 
     public magasinControleur(magasinVue vue, articleDaoImpl dao, String sexe) {
         this.vue = vue;
         this.dao = dao;
+        this.sexe = sexe; // ✅ ENREGISTRE le sexe
         this.articles = sexe.equalsIgnoreCase("Homme")
                 ? dao.getArticlesParPageHomme(1, 18)
                 : dao.getArticlesParPageFemme(1, 18);
@@ -28,10 +30,21 @@ public class magasinControleur {
                 .filter(a -> a.getPrixUnique() <= prixMax)
                 .collect(Collectors.toList());
 
-        vue.afficherArticles(filtres); // Appelle la méthode de la vue
+        vue.afficherArticles(filtres);
     }
 
     public ArrayList<Article> getArticles() {
         return articles;
+    }
+
+    public void appliquerRecherche(String motCle) {
+        ArrayList<Article> resultats = new ArrayList<>();
+        for (Article article : dao.getAll()) {
+            if (article.getSexe().equalsIgnoreCase(sexe) &&
+                    article.getNom().toLowerCase().contains(motCle.toLowerCase())) {
+                resultats.add(article);
+            }
+        }
+        vue.afficherArticles(resultats);
     }
 }
