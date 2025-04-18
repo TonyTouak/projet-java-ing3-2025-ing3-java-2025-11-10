@@ -11,6 +11,8 @@ public interface clientDao {
 
     Client chercher(int id);
 
+    Client chercherIDCLient(int idClient);
+
     Client modifier(Client client);
 
     void supprimer(Client client);

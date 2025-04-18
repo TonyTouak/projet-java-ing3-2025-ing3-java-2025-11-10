@@ -57,6 +57,50 @@ public class commandeDaoImpl implements commandeDao {
     }
 
     @Override
+    public List<Commande> getCommandesParClient(int idClient) {
+        List<Commande> commandes = new ArrayList<>();
+        clientDao clientDao = new clientDaoImpl(daoFactory);
+
+        Client client = clientDao.chercherIDCLient(idClient);
+
+        if (client == null) {
+            System.out.println("Client non trouvé pour l'ID : " + idClient);
+            return commandes;
+        }
+
+        String sql = "SELECT idCommande, date, prix, quantite FROM commande WHERE idClient = ? ORDER BY date DESC";
+
+        try (Connection con = daoFactory.getConnexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idClient);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int idCommande = rs.getInt("idCommande");
+                Date dateCommande = rs.getDate("date");
+                float montant = rs.getFloat("prix");
+                int quantite = rs.getInt("quantite");
+
+                Commande commande = new Commande(idCommande, client, dateCommande, montant, quantite);
+                commandes.add(commande);
+            }
+
+            if (commandes.isEmpty()) {
+                System.out.println("Aucune commande trouvée pour le client ID: " + idClient);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return commandes;
+    }
+
+
+
+
+    @Override
     public Commande chercher(int idCommande) throws SQLException {
         String query = "SELECT * FROM commande WHERE IDCommande = ?";
 

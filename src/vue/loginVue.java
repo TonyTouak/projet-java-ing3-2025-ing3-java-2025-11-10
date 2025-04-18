@@ -14,24 +14,27 @@ public class loginVue extends JFrame {
 
     public loginVue() {
         setTitle("Bienvenue sur ShopTopie");
-        setSize(1000, 700);
+        setSize(600, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", "");
         utilisateurDao = new utilisateurDaoImpl(daoFactory);
 
-        // En-tête
         JPanel header = new JPanel();
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(new Color(30, 144, 255));
-        header.setPreferredSize(new Dimension(1000, 150));
+        header.setBorder(BorderFactory.createEmptyBorder(30, 10, 30, 10));
+
         JLabel title = new JLabel("Bienvenue sur ShopTopie");
         title.setFont(new Font("SansSerif", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
         header.add(title);
 
-        // Formulaire
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -46,31 +49,23 @@ public class loginVue extends JFrame {
         gbc.gridx = 1;
         formPanel.add(passwordField, gbc);
 
-        // Boutons
         JButton btnConnexion = new JButton("Se connecter");
         JButton btnInscription = new JButton("S'inscrire");
-        JButton btnContinuer = new JButton("Continuer sans se connecter");
 
         btnConnexion.addActionListener(e -> seConnecter());
         btnInscription.addActionListener(e -> {
             dispose();
             new inscriptionVue();
         });
-        btnContinuer.addActionListener(e -> {
-            dispose();
-            new accueilVue(null);
-        });
 
-        JPanel btnPanel = new JPanel(new FlowLayout());
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnPanel.setBackground(Color.WHITE);
         btnPanel.add(btnConnexion);
         btnPanel.add(btnInscription);
-        btnPanel.add(btnContinuer);
 
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         formPanel.add(btnPanel, gbc);
 
-        // Ajout des panels
         add(header, BorderLayout.NORTH);
         add(formPanel, BorderLayout.CENTER);
         setVisible(true);

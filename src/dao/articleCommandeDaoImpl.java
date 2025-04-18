@@ -13,7 +13,7 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
     }
 
     @Override
-    public List<ArticleCommande> getArticlesParCommande(int idCommande) throws Exception {
+    public List<ArticleCommande> getArticlesParCommande(int idCommande) {
         List<ArticleCommande> articles = new ArrayList<>();
         String sql = "SELECT * FROM articlecommande WHERE IDCommande = ?";
 
@@ -31,6 +31,8 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
                     ));
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return articles;
     }
