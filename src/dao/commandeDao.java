@@ -16,6 +16,8 @@ public interface commandeDao {
 
     int ajouter(Commande commande)throws SQLException ;
 
+    List<Commande> getCommandesParClient(int idClient);
+
     Commande chercher(int idCommande) throws SQLException;
 
     void supprimer(Commande commande) throws SQLException;

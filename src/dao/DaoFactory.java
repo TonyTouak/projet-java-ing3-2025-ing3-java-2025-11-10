@@ -109,4 +109,8 @@ public class DaoFactory {
             System.out.println("Erreur lors de la déconnexion à la base de données");
         }
     }
+
+    public Connection getConnexion() throws SQLException {
+        return DriverManager.getConnection(url, username, password);
+    }
 }

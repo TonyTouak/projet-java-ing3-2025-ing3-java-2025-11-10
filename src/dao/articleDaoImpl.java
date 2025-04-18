@@ -201,6 +201,37 @@ public class articleDaoImpl implements articleDao {
         return listeArticles;
     }
 
+    @Override
+    public Article getArticleParId(int id) {
+        Article article = null;
+        try (Connection con = daoFactory.getConnexion();
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM article WHERE IDArticle = ?")) {
+
+            ps.setInt(1, id);
+            ResultSet resultats = ps.executeQuery();
+
+            if (resultats.next()) {
+                int idArticle = resultats.getInt("IDArticle");
+                double prixUnique = resultats.getDouble("prix_unique");
+                double prixVrac = resultats.getDouble("prix_vrac");
+                String marque = resultats.getString("marque");
+                int quantiteVrac = resultats.getInt("quantite_vrac");
+                String taille = resultats.getString("taille");
+                String type = resultats.getString("type");
+                String nom = resultats.getString("nom");
+                String image = resultats.getString("image");
+                String sexe = resultats.getString("sexe");
+                int quantite = resultats.getInt("quantite");
+
+                article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return article;
+    }
+
+
 
     public ArrayList<Article> getArticlesParPageFemme(int page, int taillePage) {
         ArrayList<Article> listeArticles = new ArrayList<>();

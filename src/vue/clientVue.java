@@ -1,10 +1,15 @@
 package vue;
 
+import dao.*;
+import modele.Article;
+import modele.ArticleCommande;
 import modele.Client;
 import modele.Commande;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class clientVue extends JFrame {
@@ -18,7 +23,7 @@ public class clientVue extends JFrame {
         setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(new Color(255, 255, 255));
+        getContentPane().setBackground(Color.WHITE);
 
         menuVue menuVue = new menuVue(client, this);
         setJMenuBar(menuVue.creerMenuBar());
@@ -34,11 +39,11 @@ public class clientVue extends JFrame {
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(new Color(255, 255, 255));
+        contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
-        contentPanel.add(createLabel("🆔 ID Client : " + client.getIDClient()));
-        contentPanel.add(createLabel("🆔 ID Utilisateur : " + client.getId()));
+        contentPanel.add(createLabel("🔑 ID Client : " + client.getIDClient()));
+        contentPanel.add(createLabel("🔑 ID Utilisateur : " + client.getId()));
         contentPanel.add(createLabel("📍 Adresse : " + client.getAdresse()));
         contentPanel.add(createLabel("📞 Téléphone : " + client.getTelephone()));
         contentPanel.add(createLabel("👤 Nom : " + client.getNom()));
@@ -49,21 +54,76 @@ public class clientVue extends JFrame {
         titreCommandes.setFont(new Font("SansSerif", Font.BOLD, 18));
         contentPanel.add(titreCommandes);
 
-        List<Commande> commandes = client.getCommandes();
-        if (commandes != null && !commandes.isEmpty()) {
-            for (Commande commande : commandes) {
-                String texteCommande = "- Commande #" + commande.getId() +
-                        " du " + commande.getDate() +
-                        " | " + commande.getPrix() + " €" +
-                        " x " + commande.getQuantite();
-                contentPanel.add(createLabel(texteCommande));
-            }
+
+        DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", "");
+        articleDao articleDao = new articleDaoImpl(daoFactory);
+        articleCommandeDao articleCommandeDao = new articleCommandeDaoImpl(daoFactory);
+        commandeDao commandeDao = new commandeDaoImpl(daoFactory);
+
+
+        List<Commande> commandes = commandeDao.getCommandesParClient(client.getIDClient());
+        if (commandes.isEmpty()) {
+            contentPanel.add(createLabel("Aucune commande passée"));
         } else {
-            contentPanel.add(createLabel("Aucune commande passée."));
+            for (Commande commande : commandes) {
+                JPanel commandePanel = new JPanel();
+                commandePanel.setLayout(new BoxLayout(commandePanel, BoxLayout.Y_AXIS));
+                commandePanel.setBackground(new Color(245, 250, 255));
+                commandePanel.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                        BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                ));
+                commandePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                JLabel titreCommande = new JLabel("Commande du " + commande.getDate() + " (Total : " + commande.getPrix() + " €)");
+                titreCommande.setFont(new Font("SansSerif", Font.BOLD, 16));
+                titreCommande.setAlignmentX(Component.LEFT_ALIGNMENT);
+                commandePanel.add(titreCommande);
+                commandePanel.add(Box.createVerticalStrut(10));
+
+                List<ArticleCommande> articlesCommandes = articleCommandeDao.getArticlesParCommande(commande.getId());
+
+                for (ArticleCommande ac : articlesCommandes) {
+                    Article article = articleDao.getArticleParId(ac.getIdArticle());
+
+                    if (article != null) {
+                        JPanel articlePanel = new JPanel();
+                        articlePanel.setLayout(new BoxLayout(articlePanel, BoxLayout.X_AXIS));
+                        articlePanel.setBackground(Color.WHITE);
+                        articlePanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 10));
+                        articlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                        String imagePath = "./images/" + article.getImage();
+                        File imageFile = new File(imagePath);
+                        JLabel imgLabel;
+                        if (imageFile.exists()) {
+                            ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
+                            Image scaled = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                            imgLabel = new JLabel(new ImageIcon(scaled));
+                        } else {
+                            imgLabel = new JLabel("[Image introuvable]");
+                        }
+
+                        JLabel detailsLabel = new JLabel("  Taille : " + article.getTaille());
+                        detailsLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+                        articlePanel.add(imgLabel);
+                        articlePanel.add(Box.createRigidArea(new Dimension(10, 0)));
+                        articlePanel.add(detailsLabel);
+
+                        commandePanel.add(articlePanel);
+                    }
+                }
+
+                commandePanel.add(Box.createVerticalStrut(10));
+                contentPanel.add(Box.createVerticalStrut(15));
+                contentPanel.add(commandePanel);
+            }
         }
 
-        contentPanel.add(Box.createVerticalStrut(30));
 
+
+        contentPanel.add(Box.createVerticalStrut(20));
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDeconnexion.setBackground(new Color(30, 144, 255));
@@ -74,7 +134,7 @@ public class clientVue extends JFrame {
             new loginVue();
         });
         contentPanel.add(btnDeconnexion);
-        contentPanel.add(Box.createVerticalStrut(20));
+
 
         JScrollPane scroll = new JScrollPane(contentPanel);
         scroll.setBorder(null);
@@ -93,16 +153,17 @@ public class clientVue extends JFrame {
         return label;
     }
 
-    private JPanel creerPanelCommande(Commande commande) {
+    private JPanel creerPanelCommande(Commande commande, Article article, int quantite) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(10, 0, 20, 0)
+        ));
 
-        Article article = commande.getArticle();
-
-        // Affichage image (Images/nomFichier.png)
-        String imagePath = "Images/" + article.getImage(); // ex: Images/brassiere.png
+        // Image
+        String imagePath = "Images/" + article.getImage() + ".png";
         File imageFile = new File(imagePath);
         if (imageFile.exists()) {
             ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
@@ -114,16 +175,16 @@ public class clientVue extends JFrame {
             panel.add(createLabel("[Image introuvable]"));
         }
 
-        // Nom article
+        // Nom
         JLabel nomArticle = new JLabel(article.getNom());
         nomArticle.setFont(new Font("SansSerif", Font.BOLD, 16));
         nomArticle.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(nomArticle);
 
-        // Détail commande
+        // Détail
+        float prixTotal = article.calculerPrix(quantite);
         String details = "Commande du " + commande.getDate() +
-                " | " + commande.getPrixFinal() + " €" +
-                " x " + commande.getQuantite();
+                " | " + quantite + " x → " + prixTotal + " €";
         JLabel infos = createLabel(details);
         infos.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(infos);

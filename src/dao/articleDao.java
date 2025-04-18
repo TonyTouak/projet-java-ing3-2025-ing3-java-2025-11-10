@@ -18,6 +18,8 @@ public interface articleDao {
 
     void supprimer(Article article);
 
+    Article getArticleParId(int id);
+
     List<Article> getVariantesParArticle(String marque, String type, String sexe, String nom);
 
     Article getArticleParAttributsEtTaille(String marque, String type, String sexe, String nom, String taille);

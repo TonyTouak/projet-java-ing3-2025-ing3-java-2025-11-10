@@ -117,34 +117,32 @@ public class clientDaoImpl implements clientDao {
     }
 
 
-    public Client chercherParIdUtilisateur(int idUtilisateur) {
+    @Override
+    public Client chercherIDCLient(int idClient) {
         Client client = null;
-        String query = "SELECT * FROM client WHERE IDUtilisateur = ?";
+        String query = "SELECT IDUtilisateur FROM client WHERE IDClient = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement ps = connexion.prepareStatement(query)) {
 
-            ps.setInt(1, idUtilisateur);
+            ps.setInt(1, idClient);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                client = new Client(
-                        rs.getInt("IDClient"),
-                        "Nom",
-                        "email",
-                        "motdepasse",
-                        rs.getInt("IDUtilisateur"),
-                        rs.getString("adresse"),
-                        rs.getString("telephone")
-                );
+                int idUtilisateur = rs.getInt("IDUtilisateur");
+
+                client = chercher(idUtilisateur);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Client non trouvé dans la base de données");
         }
 
         return client;
     }
+
+
 
 
 
@@ -205,7 +203,6 @@ public class clientDaoImpl implements clientDao {
         }
     }
 
-
-    }
+}
 
 
