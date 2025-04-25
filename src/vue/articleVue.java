@@ -208,21 +208,24 @@ public class articleVue extends JFrame {
     private void mettreAJourArticle(Article article) {
         this.articleCourant = article;
 
-        boolean disponible = article.getQuantite() > 0;
+        Panier panier = Panier.getInstance();
+        int quantiteDansPanier = panier.getQuantite(article);
+        int stockRestant = article.getQuantite() - quantiteDansPanier;
+
+        boolean disponible = stockRestant > 0;
         quantiteDisponible.setText(disponible ?
-                "Quantité disponible : " + article.getQuantite() :
+                "Quantité disponible : " + stockRestant :
                 "RUPTURE DE STOCK");
         quantiteDisponible.setForeground(disponible ? Color.BLACK : Color.RED);
-
-        updatePrixDisplay();
 
         quantite.setModel(new SpinnerNumberModel(
                 1,
                 1,
-                disponible ? article.getQuantite() : 1,
+                Math.max(stockRestant, 1),
                 1));
         quantite.setEnabled(disponible);
     }
+
 
     private void updatePrixDisplay() {
 
@@ -284,22 +287,23 @@ public class articleVue extends JFrame {
     private void ajouterAuPanier() {
         int quantite_panier = (int) quantite.getValue();
 
-        if (quantite_panier > articleCourant.getQuantite()) {
+        Panier panier = Panier.getInstance();
+        int quantiteDejaDansPanier = panier.getQuantite(articleCourant);
+        int stockRestant = articleCourant.getQuantite() - quantiteDejaDansPanier;
+
+        if (quantite_panier > stockRestant) {
             JOptionPane.showMessageDialog(this,
-                    "Quantité indisponible. Stock restant: " + articleCourant.getQuantite(),
+                    "Quantité indisponible. Stock restant: " + stockRestant,
                     "Erreur de stock",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         double prixTotal = articleCourant.calculerPrix(quantite_panier);
-
-        Panier panier = Panier.getInstance();
         panier.ajouterArticle(articleCourant, quantite_panier, prixTotal);
 
-        int nouveauStock = articleCourant.getQuantite() - quantite_panier;
-        articleCourant.setQuantite(nouveauStock);
-        mettreAJourStock(nouveauStock);
+        // NE PAS modifier le stock ici → il doit rester celui en BDD
+        mettreAJourArticle(articleCourant); // met à jour stock visuel réel
         mettreAJourAffichagePanier();
 
         String message;
@@ -324,6 +328,7 @@ public class articleVue extends JFrame {
 
         JOptionPane.showMessageDialog(this, message, "Article ajouté", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     private JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
