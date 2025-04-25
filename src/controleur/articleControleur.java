@@ -22,21 +22,20 @@ public class articleControleur implements ActionListener {
         if ("Ajouter au panier".equals(e.getActionCommand())) {
             int quantite = vue.getQuantiteSelectionnee();
 
-            if (quantite > article.getQuantite()) {
+            Panier panier = Panier.getInstance();
+            int quantiteDejaDansPanier = panier.getQuantite(article);
+            int stockRestant = article.getQuantite() - quantiteDejaDansPanier;
+
+            if (quantite > stockRestant) {
                 JOptionPane.showMessageDialog(vue,
-                        "Quantité indisponible. Stock restant: " + article.getQuantite(),
+                        "Quantité indisponible. Stock restant: " + stockRestant,
                         "Erreur de stock",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             float prixTotal = article.calculerPrix(quantite);
-
-            Panier panier = Panier.getInstance();
             panier.ajouterArticle(article, quantite, prixTotal);
-
-            article.setQuantite(article.getQuantite() - quantite);
-            vue.mettreAJourStock(article.getQuantite());
 
             String message;
             if (article.getQuantiteVrac() > 1 && quantite >= article.getQuantiteVrac()) {
@@ -68,5 +67,4 @@ public class articleControleur implements ActionListener {
 
             vue.mettreAJourAffichagePanier();
         }
-    }
-}
+    }}
