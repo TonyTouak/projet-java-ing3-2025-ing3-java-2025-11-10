@@ -31,4 +31,8 @@ public interface commandeDao {
     int creerNouvelleCommande(int idClient, float prixTotal) throws SQLException;
 
     List<Commande> getCommandesParClientID(int idClient);
+
+    List<Commande> listerToutes() throws SQLException;
+
+    void mettreAJour(Commande commande) throws SQLException;
 }

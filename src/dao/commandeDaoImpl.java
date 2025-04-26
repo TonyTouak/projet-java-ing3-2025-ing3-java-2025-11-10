@@ -35,15 +35,14 @@ public class commandeDaoImpl implements commandeDao {
 
     @Override
     public int ajouter(Commande commande) throws SQLException {
-        String query = "INSERT INTO commande (IDClient, date, prix, quantite) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO commande (IDClient, date, prix) VALUES (?, ?, ?)";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement ps = connexion.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setInt(1, commande.getClient().getId());
+            ps.setInt(1, commande.getClient().getIDClient());
             ps.setTimestamp(2, new Timestamp(commande.getDate().getTime()));
             ps.setFloat(3, commande.getPrix());
-            ps.setInt(4, commande.getQuantite());
 
             ps.executeUpdate();
 
@@ -68,7 +67,7 @@ public class commandeDaoImpl implements commandeDao {
             return commandes;
         }
 
-        String sql = "SELECT idCommande, date, prix, quantite FROM commande WHERE idClient = ? ORDER BY date DESC";
+        String sql = "SELECT idCommande, date, prix FROM commande WHERE idClient = ? ORDER BY date DESC";
 
         try (Connection con = daoFactory.getConnexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -80,9 +79,8 @@ public class commandeDaoImpl implements commandeDao {
                 int idCommande = rs.getInt("idCommande");
                 Date dateCommande = rs.getDate("date");
                 float montant = rs.getFloat("prix");
-                int quantite = rs.getInt("quantite");
 
-                Commande commande = new Commande(idCommande, client, dateCommande, montant, quantite);
+                Commande commande = new Commande(idCommande, client, dateCommande, montant);
                 commandes.add(commande);
             }
 
@@ -137,13 +135,11 @@ public class commandeDaoImpl implements commandeDao {
             connection.setAutoCommit(false);
 
             float montantTotal = calculerTotalPanier(articlesPanier);
-            int quantiteTotale = calculerQuantiteTotale(articlesPanier);
 
             Commande commande = new Commande();
             commande.setClient(client);
             commande.setDate(new Date());
             commande.setPrix(montantTotal);
-            commande.setQuantite(quantiteTotale);
 
             int idCommande = insererCommande(connection, commande);
             if (idCommande == -1) {
@@ -163,7 +159,7 @@ public class commandeDaoImpl implements commandeDao {
                     return false;
                 }
 
-                ArticleCommande ac = new ArticleCommande(article.getId(), idCommande, quantite);
+                ArticleCommande ac = new ArticleCommande(article.getId(), idCommande, quantite, article.calculerPrix(quantite));
                 if (!articleCmdDao.ajouterLigneCommande(connection, ac)) {
                     connection.rollback();
                     return false;
@@ -214,7 +210,7 @@ public class commandeDaoImpl implements commandeDao {
                 Article article = entry.getKey();
                 int quantite = entry.getValue();
 
-                articleCmdDao.ajouterLigneCommande(connexion, new ArticleCommande(article.getId(), idCommande, quantite));
+                articleCmdDao.ajouterLigneCommande(connexion, new ArticleCommande(article.getId(), idCommande, quantite, article.calculerPrix(quantite)));
                 articleDao.decrementerStock(connexion, article.getId(), quantite);
             }
 
@@ -228,14 +224,13 @@ public class commandeDaoImpl implements commandeDao {
 
 
     private int insererCommande(Connection connection, Commande commande) {
-        String sql = "INSERT INTO commande (IDClient, date, prix, quantite) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO commande (IDClient, date, prix) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, commande.getClient().getId());
             // On utilise une conversion de type pour s'adapter à notre définition en sql
             ps.setTimestamp(2, new java.sql.Timestamp(commande.getDate().getTime()));
             ps.setFloat(3, commande.getPrix());
-            ps.setInt(4, commande.getQuantite());
 
             ps.executeUpdate();
 
@@ -254,10 +249,9 @@ public class commandeDaoImpl implements commandeDao {
     public Commande creerCommandeDepuisResultSet(ResultSet rs) throws SQLException {
         return new Commande(
                 rs.getInt("IDCommande"),
-                new clientDaoImpl(daoFactory).chercher(rs.getInt("IDClient")),
+                new clientDaoImpl(daoFactory).chercherIDCLient(rs.getInt("IDClient")),
                 rs.getTimestamp("date"),
-                rs.getFloat("prix"),
-                rs.getInt("quantite")
+                rs.getFloat("prix")
         );
     }
 
@@ -314,7 +308,7 @@ public class commandeDaoImpl implements commandeDao {
                 List<Article> articles = getArticlesParCommande(idCommande);
 
                 for (Article article : articles) {
-                    commandes.add(new Commande(idCommande, client, date, prix, 1));
+                    commandes.add(new Commande(idCommande, client, date, prix));
                 }
             }
         } catch (SQLException e) {
@@ -359,6 +353,67 @@ public class commandeDaoImpl implements commandeDao {
         }
 
         return articles;
+    }
+
+
+    @Override
+    public List<Commande> listerToutes() throws SQLException {
+        List<Commande> commandes = new ArrayList<>();
+        String sql = "SELECT * FROM commande";
+        try (Connection conn = daoFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Commande cmd = new Commande();
+                cmd.setId(rs.getInt("IDCommande"));
+                cmd.setDate(rs.getDate("date"));
+
+                int idClient = rs.getInt("IDClient");
+                Client client = new clientDaoImpl(daoFactory).chercher(idClient);
+                cmd.setClient(client);
+
+                commandes.add(cmd);
+            }
+        }
+        return commandes;
+    }
+
+    @Override
+    public void mettreAJour(Commande commande) {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connexion = daoFactory.getConnexion();
+            String sql = "UPDATE commande SET IDClient = ?, date = ?, prix = ? WHERE IDCommande = ?";
+            preparedStatement = connexion.prepareStatement(sql);
+
+            preparedStatement.setInt(1, commande.getClient().getIDClient());
+            preparedStatement.setDate(2, new java.sql.Date(commande.getDate().getTime()));
+            preparedStatement.setFloat(3, commande.getPrix());
+            preparedStatement.setInt(4, commande.getId());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connexion != null) {
+                try {
+                    connexion.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

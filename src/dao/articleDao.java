@@ -29,4 +29,7 @@ public interface articleDao {
     boolean decrementerStock(Connection connection, int idArticle, int quantite) throws SQLException;
 
     boolean verifierStock(int idArticle, int quantite);
+
+    void appliquerReduction(int idArticle, double reductionPourcent);
+
 }

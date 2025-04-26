@@ -7,14 +7,12 @@ public class Commande {
     private Client client;
     private Date date;
     private float prix;
-    private int quantite;
 
-    public Commande(int id, Client client, Date date, float prix, int quantite) {
+    public Commande(int id, Client client, Date date, float prix) {
         this.id = id;
         this.client = client;
         this.date = date;
         this.prix = prix;
-        this.quantite = quantite;
     }
 
     public Commande() {
@@ -36,10 +34,6 @@ public class Commande {
         return prix;
     }
 
-    public int getQuantite() {
-        return quantite;
-    }
-
     public void setId(int anInt) {
         this.id = anInt;
     }
@@ -50,10 +44,6 @@ public class Commande {
 
     public void setPrix(float v) {
         this.prix = v;
-    }
-
-    public void setQuantite(int i) {
-        this.quantite = i;
     }
 
     public void setClient(Client client) {

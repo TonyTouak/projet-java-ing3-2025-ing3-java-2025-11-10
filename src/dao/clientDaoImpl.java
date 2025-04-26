@@ -143,9 +143,6 @@ public class clientDaoImpl implements clientDao {
     }
 
 
-
-
-
     @Override
     public Client modifier(Client client) {
         String queryClient = "UPDATE client SET adresse = ?, telephone = ? WHERE IDClient = ?";
@@ -165,7 +162,7 @@ public class clientDaoImpl implements clientDao {
 
                 preparedStatementClient.setString(1, client.getAdresse());
                 preparedStatementClient.setString(2, client.getTelephone());
-                preparedStatementClient.setInt(4, client.getIDClient());
+                preparedStatementClient.setInt(3, client.getIDClient());
                 preparedStatementClient.executeUpdate();
             }
 
@@ -203,6 +200,48 @@ public class clientDaoImpl implements clientDao {
         }
     }
 
+
+    @Override
+    public boolean supprimerID(int idClient) {
+        String queryClient = "DELETE FROM client WHERE IDClient = ?";
+        String queryUtilisateur = "DELETE FROM utilisateur WHERE IDUtilisateur = ?";
+
+        try (Connection connexion = daoFactory.getConnection()) {
+            connexion.setAutoCommit(false);
+
+            int idUtilisateur = -1;
+            String queryFindUser = "SELECT IDUtilisateur FROM client WHERE IDClient = ?";
+            try (PreparedStatement psFind = connexion.prepareStatement(queryFindUser)) {
+                psFind.setInt(1, idClient);
+                try (ResultSet rs = psFind.executeQuery()) {
+                    if (rs.next()) {
+                        idUtilisateur = rs.getInt("IDUtilisateur");
+                    } else {
+                        connexion.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            try (PreparedStatement psClient = connexion.prepareStatement(queryClient);
+                 PreparedStatement psUtilisateur = connexion.prepareStatement(queryUtilisateur)) {
+
+                psClient.setInt(1, idClient);
+                psClient.executeUpdate();
+
+                psUtilisateur.setInt(1, idUtilisateur);
+                psUtilisateur.executeUpdate();
+            }
+
+            connexion.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors de la suppression du client ou de l'utilisateur: " + e.getMessage());
+            return false;
+        }
+    }
 }
 
 

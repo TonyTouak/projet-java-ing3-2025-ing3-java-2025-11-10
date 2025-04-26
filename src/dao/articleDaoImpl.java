@@ -126,8 +126,8 @@ public class articleDaoImpl implements articleDao {
             preparedStatement.setDouble(2, article.getPrixVrac());
             preparedStatement.setString(3, article.getMarque());
             preparedStatement.setInt(4, article.getQuantiteVrac());
-            preparedStatement.setString(5, article.getTaille());
-            preparedStatement.setString(6, article.getType());
+            preparedStatement.setString(5, article.getType());;
+            preparedStatement.setString(6, article.getTaille());
             preparedStatement.setString(7, article.getNom());
             preparedStatement.setString(8, article.getImage());
             preparedStatement.setString(9, article.getSexe());
@@ -420,7 +420,7 @@ public class articleDaoImpl implements articleDao {
                 result.getString("image"),
                 result.getString("sexe"),
                 result.getInt("quantite")
-                );
+        );
     }
 
     @Override
@@ -469,5 +469,21 @@ public class articleDaoImpl implements articleDao {
         }
         return false;
     }
+
+    public void appliquerReduction(int idArticle, double pourcentage_reduction) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "UPDATE article SET reduction = ? WHERE IDArticle = ?";
+            PreparedStatement ps = connexion.prepareStatement(sql);
+            ps.setDouble(1, pourcentage_reduction);
+            ps.setInt(2, idArticle);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 }
 

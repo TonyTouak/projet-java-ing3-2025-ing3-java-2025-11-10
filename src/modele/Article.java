@@ -12,9 +12,9 @@ public class Article {
     private String image;
     private String sexe;
     private int quantite;
+    private double reduction;
 
-
-    public Article(int id, double prixUnique, double prixVrac, String marque,int quantiteVrac, String taille, String type, String nom, String image, String sexe, int quantite) {
+    public Article(int id, double prixUnique, double prixVrac, String marque, int quantiteVrac, String taille, String type, String nom, String image, String sexe, int quantite) {
         this.id = id;
         this.prixUnique = prixUnique;
         this.prixVrac = prixVrac;
@@ -26,6 +26,19 @@ public class Article {
         this.image = image;
         this.sexe = sexe;
         this.quantite = quantite;
+        this.reduction = 0.0;
+    }
+
+    public double getReduction() {
+        return reduction;
+    }
+
+    public void setReduction(double reduction) {
+        this.reduction = reduction;
+    }
+
+    public double getPrixReduit() {
+        return prixUnique * (1 - reduction / 100.0);
     }
 
     public int getId() {
@@ -79,14 +92,13 @@ public class Article {
      * @return : Le prix total de la commande
      */
     public float calculerPrix(int quantite) {
-        if(quantiteVrac != 0) {
-            int paquet, quantiteUnique;
-            paquet = quantite / quantiteVrac;
-            quantiteUnique = quantite % quantiteVrac;
-            return (float) ((paquet * prixVrac) + (quantiteUnique * prixUnique));
-        }
-        else {
-            return (float) (prixUnique * quantite);
+        double prixUnitaire = getPrixReduit();
+        if (quantiteVrac != 0) {
+            int paquet = quantite / quantiteVrac;
+            int quantiteUnique = quantite % quantiteVrac;
+            return (float) ((paquet * prixVrac) + (quantiteUnique * prixUnitaire));
+        } else {
+            return (float) (prixUnitaire * quantite);
         }
     }
 
@@ -102,11 +114,11 @@ public class Article {
         this.prixVrac = prixVrac;
     }
 
-    public void setSexe (String sexe) {
+    public void setSexe(String sexe) {
         this.sexe = sexe;
     }
 
-    public void setTaille (String taille) {
+    public void setTaille(String taille) {
         this.taille = taille;
     }
 
