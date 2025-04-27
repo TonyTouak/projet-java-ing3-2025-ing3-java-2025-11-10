@@ -165,6 +165,49 @@ public class articleVue extends JFrame {
         prixUnitairePanel.add(prixUnitaireValue);
         prixPanel.add(prixUnitairePanel);
 
+        //on affiche la réduction pour les articles concernés
+        if (articleCourant.getReduction() > 0) {
+            JPanel reductionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            reductionPanel.setBackground(Color.WHITE);
+            reductionPanel.setMaximumSize(new Dimension(400, 30));
+
+            JLabel reductionLabel = new JLabel("Réduction :");
+            reductionLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            reductionLabel.setPreferredSize(new Dimension(100, 25));
+            reductionPanel.add(reductionLabel);
+
+            JLabel reductionValue = new JLabel("-" + new DecimalFormat("0.00").format(articleCourant.getReduction()) + " %");
+            reductionValue.setFont(new Font("SansSerif", Font.BOLD, 16));
+            reductionValue.setForeground(new Color(0, 150, 0));
+            reductionPanel.add(reductionValue);
+
+            prixPanel.add(reductionPanel);
+
+            prixPanel.add(reductionPanel);
+
+            float prixReduitUnitaire = articleCourant.calculerPrix(1);
+
+            JPanel prixReduitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            prixReduitPanel.setBackground(Color.WHITE);
+            prixReduitPanel.setMaximumSize(new Dimension(400, 30));
+
+            JLabel prixReduitLabel = new JLabel("Prix après réduction :");
+            prixReduitLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+            prixReduitLabel.setPreferredSize(new Dimension(150, 25));
+            prixReduitPanel.add(prixReduitLabel);
+
+            JLabel prixReduitValue = new JLabel(String.format("%.2f €", prixReduitUnitaire));
+            prixReduitValue.setFont(new Font("SansSerif", Font.BOLD, 16));
+            prixReduitValue.setForeground(new Color(34, 139, 34));
+            prixReduitPanel.add(prixReduitValue);
+
+            prixPanel.add(prixReduitPanel);
+
+
+
+        }
+
+
         //Le prix en Vrac n'est ajouté que pour les articles concernés
         prixVrac = new JLabel();
         prixVrac.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -191,10 +234,31 @@ public class articleVue extends JFrame {
         detailsPanel.add(quantitePanel);
         detailsPanel.add(Box.createVerticalStrut(30));
 
-        JButton ajouterPanierButton = createStyledButton("Ajouter au panier", new Color(50, 205, 50));
+        JButton ajouterPanierButton = styleBouton("Ajouter au panier", new Color(50, 205, 50));
         ajouterPanierButton.addActionListener(e -> ajouterAuPanier());
         ajouterPanierButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         detailsPanel.add(ajouterPanierButton);
+
+        JButton retourButton = new JButton("Retour");
+        retourButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+        retourButton.setBackground(new Color(30, 144, 255));
+        retourButton.setForeground(Color.WHITE);
+        retourButton.setFocusPainted(false);
+        retourButton.addActionListener(e -> {
+            dispose();
+            //on revient à la vue adéquat suivant le sexe de l'article
+            if (articleCourant.getSexe().equalsIgnoreCase("Homme")) {
+                new magasinHommeVue(client);
+            } else {
+                new magasinFemmeVue(client);
+            }
+        });
+        JPanel retourPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        retourPanel.setBackground(Color.WHITE);
+        retourPanel.add(retourButton);
+        detailsPanel.add(Box.createVerticalGlue());
+        detailsPanel.add(retourPanel);
+
 
         mettreAJourArticle(articleCourant);
 
@@ -213,63 +277,18 @@ public class articleVue extends JFrame {
         int stockRestant = article.getQuantite() - quantiteDansPanier;
 
         boolean disponible = stockRestant > 0;
+        //on regarde s'il reste encore du stock sur l'article
         quantiteDisponible.setText(disponible ?
                 "Quantité disponible : " + stockRestant :
                 "RUPTURE DE STOCK");
         quantiteDisponible.setForeground(disponible ? Color.BLACK : Color.RED);
 
+        // on utilise un spinner pour que le client ne puisse sélectionner qu'entre 1 et la quantité maximale disponible de l'article
         quantite.setModel(new SpinnerNumberModel(
                 1,
                 1,
                 Math.max(stockRestant, 1),
                 1));
-        quantite.setEnabled(disponible);
-    }
-
-
-    private void updatePrixDisplay() {
-
-        if (prixPanel == null) {
-            prixPanel = new JPanel();
-            prixPanel.setLayout(new BoxLayout(prixPanel, BoxLayout.Y_AXIS));
-            prixPanel.setBackground(Color.WHITE);
-        }
-
-        Component[] components = prixPanel.getComponents();
-        if (components.length > 1) {
-            prixPanel.remove(1);
-        }
-
-        if (articleCourant != null && articleCourant.getQuantiteVrac() > 1 && articleCourant.getPrixVrac() > 0) {
-            JPanel prixVracPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-            prixVracPanel.setBackground(Color.WHITE);
-            prixVracPanel.setMaximumSize(new Dimension(400, 30));
-
-            JLabel prixVracTextLabel = new JLabel("Prix en vrac (" + articleCourant.getQuantiteVrac() + " articles) :");
-            prixVracTextLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            prixVracTextLabel.setPreferredSize(new Dimension(180, 25));
-
-            JLabel prixVracValue = new JLabel(new DecimalFormat("0.00 €").format(articleCourant.getPrixVrac()));
-            prixVracValue.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            prixVracValue.setForeground(new Color(0, 100, 0));
-
-            prixVracPanel.add(prixVracTextLabel);
-            prixVracPanel.add(prixVracValue);
-
-            prixPanel.add(prixVracPanel);
-        }
-
-        prixPanel.revalidate();
-        prixPanel.repaint();
-    }
-
-    public void mettreAJourStock(int nouveauStock) {
-        boolean disponible = nouveauStock > 0;
-        quantiteDisponible.setText(disponible ?
-                "Quantité disponible : " + nouveauStock :
-                "RUPTURE DE STOCK");
-        quantiteDisponible.setForeground(disponible ? Color.BLACK : Color.RED);
-        quantite.setModel(new SpinnerNumberModel(1, 1, nouveauStock, 1));
         quantite.setEnabled(disponible);
     }
 
@@ -283,7 +302,7 @@ public class articleVue extends JFrame {
         return (int) quantite.getValue();
     }
 
-
+    //on envoie au panier l'article
     private void ajouterAuPanier() {
         int quantite_panier = (int) quantite.getValue();
 
@@ -302,11 +321,12 @@ public class articleVue extends JFrame {
         double prixTotal = articleCourant.calculerPrix(quantite_panier);
         panier.ajouterArticle(articleCourant, quantite_panier, prixTotal);
 
-        // NE PAS modifier le stock ici → il doit rester celui en BDD
-        mettreAJourArticle(articleCourant); // met à jour stock visuel réel
+        //on met à jour le stock
+        mettreAJourArticle(articleCourant);
         mettreAJourAffichagePanier();
 
         String message;
+        //on affiche le prix détaillé pour les articles en vrac
         if (articleCourant.getQuantiteVrac() > 1 && quantite_panier >= articleCourant.getQuantiteVrac()) {
             int paquets = quantite_panier / articleCourant.getQuantiteVrac();
             int restant = quantite_panier % articleCourant.getQuantiteVrac();
@@ -330,7 +350,7 @@ public class articleVue extends JFrame {
     }
 
 
-    private JButton createStyledButton(String text, Color bgColor) {
+    private JButton styleBouton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("SansSerif", Font.BOLD, 18));
         button.setBackground(bgColor);

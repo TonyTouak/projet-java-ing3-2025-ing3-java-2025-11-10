@@ -33,10 +33,12 @@ public class articleDaoImpl implements articleDao {
                 String image  = resultats.getString("image");
                 String sexe = resultats.getString("sexe");
                 int quantite = resultats.getInt("quantite");
+                double reduction = resultats.getDouble("reduction");
 
 
 
-                Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+
+                Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
                 listeArticles.add(article);
             }
         } catch (SQLException e) {
@@ -49,7 +51,7 @@ public class articleDaoImpl implements articleDao {
 
     @Override
     public void ajouter(Article article) {
-        String query = "INSERT INTO article (prix_unique, prix_vrac, marque, quantite_vrac, taille, type, nom, image, sexe, quantite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO article (prix_unique, prix_vrac, marque, quantite_vrac, taille, type, nom, image, sexe, quantite, reduction) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -64,6 +66,8 @@ public class articleDaoImpl implements articleDao {
             preparedStatement.setString(8, article.getImage());
             preparedStatement.setString(9, article.getSexe());
             preparedStatement.setInt(10, article.getQuantite());
+            preparedStatement.setDouble(11, article.getReduction());
+
 
 
 
@@ -101,10 +105,12 @@ public class articleDaoImpl implements articleDao {
                     String image  = resultats.getString("image");
                     String sexe  = resultats.getString("sexe");
                     int quantite = resultats.getInt("quantite");
+                    double reduction = resultats.getDouble("reduction");
 
 
 
-                    article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+
+                    article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
                 }
             }
         } catch (SQLException e) {
@@ -117,7 +123,7 @@ public class articleDaoImpl implements articleDao {
 
     @Override
     public Article modifier(Article article) {
-        String query = "UPDATE article SET prix_unique = ?, prix_vrac = ?, marque = ?, quantite_vrac = ?, type = ?, taille = ?, nom = ?, image = ?, sexe = ? WHERE IDArticle = ?";
+        String query = "UPDATE article SET prix_unique = ?, prix_vrac = ?, marque = ?, quantite_vrac = ?, type = ?, taille = ?, nom = ?, image = ?, sexe = ?, reduction = ? WHERE IDArticle = ?";
 
         try (Connection connexion = daoFactory.getConnection();
              PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
@@ -133,6 +139,8 @@ public class articleDaoImpl implements articleDao {
             preparedStatement.setString(9, article.getSexe());
             preparedStatement.setInt(10, article.getQuantite());
             preparedStatement.setInt(11, article.getId());
+            preparedStatement.setDouble(12, article.getReduction());
+
 
 
 
@@ -187,9 +195,11 @@ public class articleDaoImpl implements articleDao {
                     String image = resultats.getString("image");
                     String sexe = resultats.getString("sexe");
                     int quantite = resultats.getInt("quantite");
+                    double reduction = resultats.getDouble("reduction");
 
 
-                    Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+
+                    Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
                     listeArticles.add(article);
                 }
             }
@@ -222,8 +232,10 @@ public class articleDaoImpl implements articleDao {
                 String image = resultats.getString("image");
                 String sexe = resultats.getString("sexe");
                 int quantite = resultats.getInt("quantite");
+                double reduction = resultats.getDouble("reduction");
 
-                article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+
+                article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,9 +269,11 @@ public class articleDaoImpl implements articleDao {
                     String image = resultats.getString("image");
                     String sexe = resultats.getString("sexe");
                     int quantite = resultats.getInt("quantite");
+                    double reduction = resultats.getDouble("reduction");
 
 
-                    Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite);
+
+                    Article article = new Article(id, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
                     listeArticles.add(article);
                 }
             }
@@ -271,96 +285,6 @@ public class articleDaoImpl implements articleDao {
         return listeArticles;
     }
 
-
-
-    public int getNombreTotalArticles() {
-        String query = "SELECT COUNT(*) FROM article";
-        int total = 0;
-
-        try (Connection connexion = daoFactory.getConnection();
-             Statement statement = connexion.createStatement();
-             ResultSet resultats = statement.executeQuery(query)) {
-
-            if (resultats.next()) {
-                total = resultats.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Impossible de récupérer le nombre total d'articles");
-        }
-
-        return total;
-    }
-
-
-    public Article chercherParAttributs(String marque, String type, String sexe, String nom, String taille) {
-        Article article = null;
-        String query = "SELECT * FROM article WHERE marque = ? AND type = ? AND sexe = ? AND nom = ? AND taille = ?";
-
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
-
-            preparedStatement.setString(1, marque);
-            preparedStatement.setString(2, type);
-            preparedStatement.setString(3, sexe);
-            preparedStatement.setString(4, nom);
-            preparedStatement.setString(5, taille);
-
-            try (ResultSet resultats = preparedStatement.executeQuery()) {
-                if (resultats.next()) {
-                    int quantite = Math.max(resultats.getInt("quantite"), 0);
-                    int quantiteVrac = Math.max(resultats.getInt("quantite_vrac"), 0);
-
-                    article = new Article(
-                            resultats.getInt("IDArticle"),
-                            resultats.getDouble("prix_unique"),
-                            resultats.getDouble("prix_vrac"),
-                            resultats.getString("marque"),
-                            quantiteVrac,
-                            taille,
-                            resultats.getString("type"),
-                            resultats.getString("nom"),
-                            resultats.getString("image"),
-                            resultats.getString("sexe"),
-                            quantite
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Impossible de trouver l'article.");
-        }
-
-        return article;
-    }
-
-    public List<String> getTaillesDisponibles(String marque, String type, String sexe, String nom) {
-        List<String> tailles = new ArrayList<>();
-        String query = "SELECT taille FROM article WHERE marque = ? AND type = ? AND sexe = ? AND nom = ? AND quantite > 0";
-
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
-
-            preparedStatement.setString(1, marque);
-            preparedStatement.setString(2, type);
-            preparedStatement.setString(3, sexe);
-            preparedStatement.setString(4, nom);
-
-            try (ResultSet resultats = preparedStatement.executeQuery()) {
-                while (resultats.next()) {
-                    String taille = resultats.getString("taille");
-                    if (taille != null && !taille.isEmpty()) {
-                        tailles.add(taille);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Erreur lors de la récupération des tailles disponibles.");
-        }
-
-        return tailles;
-    }
 
 
     @Override
@@ -419,8 +343,9 @@ public class articleDaoImpl implements articleDao {
                 result.getString("nom"),
                 result.getString("image"),
                 result.getString("sexe"),
-                result.getInt("quantite")
-        );
+                result.getInt("quantite"),
+                result.getDouble("reduction")
+                );
     }
 
     @Override

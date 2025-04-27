@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class promotionVue extends JFrame {
-    articleDao articleDao;
+        articleDao articleDao;
 
     public promotionVue(List<Article> articles, articleDao articleDao) {
         this.articleDao = articleDao;
