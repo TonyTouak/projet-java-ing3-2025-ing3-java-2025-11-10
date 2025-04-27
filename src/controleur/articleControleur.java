@@ -12,11 +12,27 @@ public class articleControleur implements ActionListener {
     private Article article;
     private articleVue vue;
 
+    /**
+     * Constructeur du contrôleur d'article.
+     *
+     * Initialise le contrôleur avec un article et sa vue associée.
+     *
+     * @param article L'article concerné.
+     * @param vue La vue affichant les détails de l'article.
+     */
+
     public articleControleur(Article article, articleVue vue) {
         this.article = article;
         this.vue = vue;
     }
 
+    /**
+     * Gère l'action lorsque l'utilisateur clique sur "Ajouter au panier".
+     * Vérifie la disponibilité du stock avant d'ajouter l'article au panier,
+     * calcule le prix total et met à jour l'affichage du panier.
+     *
+     * @param e événement déclenché par l'action utilisateur
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if ("Ajouter au panier".equals(e.getActionCommand())) {
@@ -67,4 +83,5 @@ public class articleControleur implements ActionListener {
 
             vue.mettreAJourAffichagePanier();
         }
-    }}
+    }
+}

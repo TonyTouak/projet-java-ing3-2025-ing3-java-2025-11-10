@@ -6,6 +6,15 @@ public abstract class Utilisateur {
     protected String email;
     protected String motDePasse;
 
+    /**
+     * Constructeur d'un utilisateur de la plateforme.
+     *
+     * @param id L'identifiant unique de l'utilisateur.
+     * @param nom Le nom de l'utilisateur.
+     * @param email L'adresse email de l'utilisateur.
+     * @param motDePasse Le mot de passe de l'utilisateur.
+     */
+
     public Utilisateur(int id, String nom, String email, String motDePasse) {
         this.id = id;
         this.nom = nom;

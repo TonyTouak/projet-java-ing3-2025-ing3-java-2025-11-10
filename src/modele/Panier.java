@@ -13,6 +13,13 @@ public class Panier {
         total = 0.0F;
     }
 
+    /**
+     * Retourne l'instance unique du panier.
+     * Si aucune instance n'existe encore, en crée une nouvelle.
+     *
+     * @return l'instance unique du panier
+     */
+
     public static Panier getInstance() {
         if (instance == null) {
             instance = new Panier();
@@ -20,6 +27,14 @@ public class Panier {
         return instance;
     }
 
+    /**
+     * Ajoute un article au panier avec une quantité et un prix total donnés.
+     *
+     * @param article article à ajouter
+     * @param quantite quantité à ajouter
+     * @param prixTotal prix total correspondant à la quantité ajoutée
+     * @throws IllegalArgumentException si la quantité est négative ou nulle
+     */
     public void ajouterArticle(Article article, int quantite, double prixTotal) {
         if (quantite <= 0) {
             throw new IllegalArgumentException("La quantité doit être positive");
@@ -34,6 +49,14 @@ public class Panier {
         this.total += prixTotal;
     }
 
+    /**
+     * Modifie la quantité d'un article dans le panier.
+     * Si la nouvelle quantité est inférieure ou égale à zéro, l'article est supprimé.
+     *
+     * @param article article dont la quantité est à modifier
+     * @param nouvelleQuantite nouvelle quantité désirée
+     * @throws IllegalArgumentException si l'article n'est pas présent dans le panier
+     */
     public void modifierQuantite(Article article, int nouvelleQuantite) {
         if (!articles.containsKey(article)) {
             throw new IllegalArgumentException("L'article n'est pas dans le panier");
@@ -49,6 +72,11 @@ public class Panier {
         articles.put(article, nouvelleQuantite);
     }
 
+    /**
+     * Supprime un article du panier et ajuste le total en conséquence.
+     *
+     * @param article article à supprimer
+     */
     public void supprimerArticle(Article article) {
         if (articles.containsKey(article)) {
             total -= article.getPrixUnique() * articles.get(article);
@@ -56,10 +84,14 @@ public class Panier {
         }
     }
 
+    /**
+     * Vide entièrement le panier et réinitialise le total à zéro.
+     */
     public void vider() {
         articles.clear();
         total = 0.0F;
     }
+
 
     public Map<Article, Integer> getArticles() {
         return new HashMap<>(articles);

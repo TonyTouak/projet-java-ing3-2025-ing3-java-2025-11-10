@@ -14,6 +14,24 @@ public class Article {
     private int quantite;
     private double reduction;
 
+    /**
+     * Constructeur d'un article sans réduction.
+     *
+     * Initialise un article avec toutes ses caractéristiques principales (prix, marque, type, stock, etc.).
+     *
+     * @param id L'identifiant de l'article.
+     * @param prixUnique Le prix unitaire de l'article.
+     * @param prixVrac Le prix pour un lot (vrac) d'articles.
+     * @param marque La marque de l'article.
+     * @param quantiteVrac La quantité d'articles comprise dans un lot (vrac).
+     * @param taille La taille de l'article.
+     * @param type Le type de l'article (ex: t-shirt, pantalon...).
+     * @param nom Le nom de l'article.
+     * @param image Le chemin vers l'image de l'article.
+     * @param sexe Le sexe associé à l'article (Homme/Femme).
+     * @param quantite La quantité disponible en stock.
+     */
+
     public Article(int id, double prixUnique, double prixVrac, String marque, int quantiteVrac, String taille, String type, String nom, String image, String sexe, int quantite) {
         this.id = id;
         this.prixUnique = prixUnique;
