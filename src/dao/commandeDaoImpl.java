@@ -175,7 +175,7 @@ public class commandeDaoImpl implements commandeDao {
         try (Connection connexion = DaoFactory.getConnection()) {
             connexion.setAutoCommit(false);
 
-            int idCommande = creerNouvelleCommande(client.getId(), panier.getTotal());
+            int idCommande = creerNouvelleCommande(client.getIDClient(), panier.getTotal());
             if (idCommande == -1) {
                 System.err.println("Échec création commande");
                 return;
@@ -251,16 +251,14 @@ public class commandeDaoImpl implements commandeDao {
      * @return : L'identifiant de la commande générée
      * @throws SQLException
      */
-    @Override
     public int creerNouvelleCommande(int idClient, float prixTotal) throws SQLException {
-        String sql = "INSERT INTO commande (IDClient, date, prix, quantite) VALUES (?, NOW(), ?, ?)";
+        String sql = "INSERT INTO commande (IDClient, date, prix) VALUES (?, NOW(), ?)";
 
         try (Connection connection = daoFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, idClient);
             ps.setFloat(2, prixTotal);
-            ps.setInt(3, 0);
 
             ps.executeUpdate();
 
@@ -272,6 +270,7 @@ public class commandeDaoImpl implements commandeDao {
         }
         throw new SQLException("Échec de la création de commande, aucun ID généré");
     }
+
 
     /**
      * Calcule le prix du panier en fonction des articles et quantités

@@ -16,7 +16,6 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     private JPanel panel_principal;
     private JComboBox<String> filtreType, filtreMarque;
     private JSlider filtrePrix;
-    private JTextField barreRecherche;
     private Client client;
     private magasinControleur controleur;
     private JComboBox<String> filtreReduction;
@@ -260,7 +259,8 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     }
 
     /**
-     * Affiche la liste des articles correspondant aux filtres.
+     * Affiche la liste des articles en n'affichant une seule fois
+     * les articles ayant la même taille aucun article en rupture de stock
      *
      * @param articles : liste d'articles à afficher
      */
@@ -270,7 +270,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         Set<String> imagesAffichees = new HashSet<>();
 
         for (Article article : articles) {
-            // on affiche pas 2 fois le même articles mais plutôt les tailles disponibles directement sur la vue article
+            // si l'article est en rupture de stock on ne l'affiche pas
+            if (article.getQuantite() < 1) {
+                continue;
+            }
+            // on affiche pas 2 fois le même article mais plutôt les tailles disponibles directement sur la vue article
             if (imagesAffichees.contains(article.getImage())) continue;
             imagesAffichees.add(article.getImage());
 
