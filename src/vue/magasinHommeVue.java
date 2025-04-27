@@ -16,7 +16,6 @@ public class magasinHommeVue extends JFrame implements magasinVue {
     private JPanel panel_principal;
     private JComboBox<String> filtreType, filtreMarque;
     private JSlider filtrePrix;
-    private JTextField barreRecherche;
     private Client client;
     private magasinControleur controleur;
     private JComboBox<String> filtreReduction;
@@ -265,6 +264,10 @@ public class magasinHommeVue extends JFrame implements magasinVue {
         Set<String> imagesAffichees = new HashSet<>();
 
         for (Article article : articles) {
+            // si l'article est en rupture de stock on ne l'affiche pas
+            if (article.getQuantite() < 1) {
+                continue;
+            }
             if (imagesAffichees.contains(article.getImage())) continue;
             imagesAffichees.add(article.getImage());
 
