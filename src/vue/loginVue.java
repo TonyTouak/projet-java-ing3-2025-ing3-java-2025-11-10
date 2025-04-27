@@ -12,6 +12,9 @@ public class loginVue extends JFrame {
     private final JPasswordField passwordField = new JPasswordField(20);
     private final utilisateurDao utilisateurDao;
 
+    /**
+     * Initialisation de l'interface de connexion des utilisateurs.
+     */
     public loginVue() {
         setTitle("Bienvenue sur ShopTopie");
         setSize(600, 500);
@@ -71,6 +74,9 @@ public class loginVue extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Vérifie les identifiants de connexion et redirige l'utilisateur vers son espace (client ou administrateur).
+     */
     private void seConnecter() {
         String email = emailField.getText().trim();
         String mdp = new String(passwordField.getPassword());

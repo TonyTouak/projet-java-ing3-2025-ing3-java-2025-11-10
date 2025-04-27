@@ -15,6 +15,9 @@ public class inscriptionVue extends JFrame {
     private JPasswordField passwordField;
     private JButton validerButton;
 
+    /**
+     * Initialise l'interface de création d'un compte client.
+     */
     public inscriptionVue() {
         setTitle("Inscription");
         setSize(1000, 700);
@@ -127,6 +130,9 @@ public class inscriptionVue extends JFrame {
         return field;
     }
 
+    /**
+     * Traite l'inscription d'un nouvel utilisateur dans la base de données.
+     */
     private void inscrire() {
         String nom = nomField.getText().trim();
         String email = emailField.getText().trim();

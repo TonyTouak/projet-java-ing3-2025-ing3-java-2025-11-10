@@ -16,6 +16,11 @@ public class clientVue extends JFrame {
     private static final String IMAGE_FOLDER = "Images/"; // <== Correction ici
     private final Client client;
 
+    /**
+     * Initialisation de l'espace client avec ses informations et ses commandes.
+     *
+     * @param client : le client connecté
+     */
     public clientVue(Client client) {
         this.client = client;
 

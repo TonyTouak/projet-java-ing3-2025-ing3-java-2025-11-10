@@ -15,6 +15,12 @@ import java.util.Map;
 public class promotionVue extends JFrame {
         articleDao articleDao;
 
+    /**
+     * Constructeur de promotionVue.
+     *
+     * @param articles : liste des articles à afficher
+     * @param articleDao : DAO pour manipuler des articles
+     */
     public promotionVue(List<Article> articles, articleDao articleDao) {
         this.articleDao = articleDao;
         setTitle("Gestion des Promotions");

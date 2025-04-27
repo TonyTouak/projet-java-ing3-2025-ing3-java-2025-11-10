@@ -14,6 +14,12 @@ public class panierVue extends JFrame {
     private JLabel totalLabel;
     private JButton validerBouton;
 
+    /**
+     * Constructeur de la vue du panier.
+     *
+     * @param client : le client connecté
+     * @param panier : le panier associé au client
+     */
     public panierVue(Client client, Panier panier) {
         setTitle("Panier - " + client.getNom());
         setSize(1000, 700);
@@ -41,6 +47,11 @@ public class panierVue extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Crée le header du panier.
+     *
+     * @return JPanel du header
+     */
     private JPanel Header() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(50, 205, 50));
@@ -59,6 +70,11 @@ public class panierVue extends JFrame {
         return header;
     }
 
+    /**
+     * Crée les boutons d'action en bas du panier (vider, valider).
+     *
+     * @return JPanel des boutons
+     */
     private JPanel Boutons() {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         buttonsPanel.setBackground(Color.WHITE);
@@ -75,6 +91,13 @@ public class panierVue extends JFrame {
         return buttonsPanel;
     }
 
+    /**
+     * Crée un bouton personnalisé.
+     *
+     * @param texte : texte du bouton
+     * @param couleur : couleur du bouton
+     * @return JButton créé
+     */
     private JButton creerBouton(String texte, Color couleur) {
         JButton bouton = new JButton(texte);
         bouton.setBackground(couleur);
@@ -86,7 +109,9 @@ public class panierVue extends JFrame {
         return bouton;
     }
 
-
+    /**
+     * Affiche un message indiquant que le panier est vide.
+     */
     private void afficherPanierVide() {
         JLabel emptyLabel = new JLabel("Votre panier est vide.", SwingConstants.CENTER);
         emptyLabel.setFont(new Font("SansSerif", Font.ITALIC, 18));
@@ -96,12 +121,22 @@ public class panierVue extends JFrame {
         validerBouton.setEnabled(false);
     }
 
+    /**
+     * Affiche les articles présents dans le panier.
+     */
     private void afficherArticles() {
         for (Map.Entry<Article, Integer> entry : controleur.getArticlesPanier().entrySet()) {
             articlesPanel.add(articlePanel(entry.getKey(), entry.getValue()));
         }
     }
 
+    /**
+     * Crée un panneau pour un article du panier.
+     *
+     * @param article : article affiché
+     * @param quantite : quantité de l'article
+     * @return JPanel représentant l'article
+     */
     private JPanel articlePanel(Article article, int quantite) {
         JPanel itemPanel = new JPanel(new BorderLayout(10, 10));
         itemPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -120,12 +155,25 @@ public class panierVue extends JFrame {
         return itemPanel;
     }
 
+    /**
+     * Crée un composant affichant l'image de l'article.
+     *
+     * @param article : article concerné
+     * @return JLabel contenant l'image
+     */
     private JLabel composantImage(Article article) {
         ImageIcon originalIcon = new ImageIcon("images/" + article.getImage());
         Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         return new JLabel(new ImageIcon(scaledImage));
     }
 
+    /**
+     * Crée un panneau contenant les détails de l'article.
+     *
+     * @param article : article affiché
+     * @param quantite : quantité de l'article
+     * @return JPanel des détails
+     */
     private JPanel Details(Article article, int quantite) {
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
@@ -150,7 +198,15 @@ public class panierVue extends JFrame {
         return detailsPanel;
     }
 
-
+    /**
+     * Crée les boutons "+" et "-" pour modifier la quantité.
+     *
+     * @param article : article concerné
+     * @param quantite : quantité actuelle
+     * @param prixLabel : label du prix
+     * @param stockLabel : label du stock
+     * @return JPanel avec les boutons de quantité
+     */
     private JPanel Quantite(Article article, int quantite, JLabel prixLabel, JLabel stockLabel) {
         JPanel quantitePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         quantitePanel.setBackground(Color.WHITE);
@@ -182,23 +238,39 @@ public class panierVue extends JFrame {
         return quantitePanel;
     }
 
-
+    /**
+     * Crée un bouton permettant de supprimer un article du panier.
+     *
+     * @param article : article à supprimer
+     * @return JButton supprimer
+     */
     private JButton boutonSuppression(Article article) {
         JButton supprimerButton = new JButton("Supprimer");
         supprimerButton.addActionListener(e -> controleur.supprimerArticle(article));
         return supprimerButton;
     }
 
+    /**
+     * Met à jour l'affichage du total du panier.
+     */
     public void actualiserTotal() {
         totalLabel.setText(String.format("Total: %.2f € (%d articles)",
                 controleur.getTotalPanier(),
                 controleur.getNombreArticles()));
     }
 
+    /**
+     * Affiche un message d'information.
+     *
+     * @param message : message à afficher
+     */
     public void afficherMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
 
+    /**
+     * Actualise tout l'affichage du panier.
+     */
     public void actualiserAffichage() {
         articlesPanel.removeAll();
 
@@ -213,13 +285,25 @@ public class panierVue extends JFrame {
         articlesPanel.repaint();
     }
 
-    //on let à jour les quantités et prix en fonction de ce qui est ajouté/supprimé via la vue du panier
+    /**
+     * Met à jour les labels de prix et de stock après une modification.
+     *
+     * @param article : article modifié
+     * @param quantite : quantité actuelle
+     * @param prixLabel : label affichant le prix
+     * @param stockLabel : label affichant le stock
+     */
+    //on met à jour les quantités et prix en fonction de ce qui est ajouté/supprimé via la vue du panier
     private void mettreAJourLabels(Article article, int quantite, JLabel prixLabel, JLabel stockLabel) {
         prixLabel.setText(String.format("Prix: %.2f €", article.calculerPrix(quantite)));
         stockLabel.setText("Stock disponible: " + (article.getQuantite() - quantite));
     }
 
-
+    /**
+     * Affichage d'une erreur dans une boîte de dialogue.
+     *
+     * @param message : message d'erreur
+     */
     public void afficherErreur(String message) {
         JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }

@@ -21,6 +21,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     private magasinControleur controleur;
     private JComboBox<String> filtreReduction;
 
+    /**
+     * Initialise la vue du magasin femme avec les composants graphiques.
+     *
+     * @param client : le client actuellement connecté
+     */
     public magasinFemmeVue(Client client) {
         this.client = client;
         initialisationInterface();
@@ -28,6 +33,9 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         setVisible(true);
     }
 
+    /**
+     * Configure l'interface graphique principale.
+     */
     private void initialisationInterface() {
         setTitle("Liste des Articles Femmes");
         setSize(1000, 700);
@@ -41,6 +49,9 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         creerPanelPrincipal();
     }
 
+    /**
+     * Instancie le contrôleur et applique les filtres par défaut.
+     */
     private void appelControleur() {
         DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", "");
         articleDaoImpl dao = new articleDaoImpl(daoFactory);
@@ -48,11 +59,17 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         controleur.appliquerFiltres("Tous", "Toutes", 300, "Toutes");
     }
 
+    /**
+     * Crée la barre de menu.
+     */
     private void barMenu() {
         menuVue menuVue = new menuVue(client, this);
         setJMenuBar(menuVue.creerMenuBar());
     }
 
+    /**
+     * Crée l'en-tête de la page.
+     */
     private void Header() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(255, 105, 180));
@@ -66,6 +83,9 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         add(header, BorderLayout.NORTH);
     }
 
+    /**
+     * Crée le panneau contenant tous les filtres.
+     */
     private void Filtres() {
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
@@ -100,6 +120,13 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         add(filterPanel, BorderLayout.WEST);
     }
 
+    /**
+     * Permet d'aligner un label et un composant dans le panneau.
+     *
+     * @param panel : le panneau cible
+     * @param label : texte du label
+     * @param component : composant associé
+     */
     private void Alignement(JPanel panel, String label, JComponent component) {
         JPanel aligner = new JPanel();
         aligner.setLayout(new BoxLayout(aligner, BoxLayout.Y_AXIS));
@@ -123,6 +150,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
     }
 
+    /**
+     * Crée le slider pour le filtre de prix maximum.
+     *
+     * @return : JSlider configuré
+     */
     private JSlider Prix() {
         JSlider slider = new JSlider(0, 300, 300);
         slider.setMajorTickSpacing(100);
@@ -134,6 +166,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         return slider;
     }
 
+    /**
+     * Crée la barre de recherche.
+     *
+     * @return : JTextField pour la recherche
+     */
     private JTextField Recherche() {
         JTextField textField = new JTextField();
         textField.setMaximumSize(new Dimension(200, 30));
@@ -147,18 +184,33 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         return textField;
     }
 
+    /**
+     * Crée le filtre de type d'article.
+     *
+     * @return : JComboBox pour le type
+     */
     private JComboBox<String> Type() {
         JComboBox<String> comboBox = new JComboBox<>(new String[]{"Tous", "Chaussures", "Short", "Legging", "Chausettes", "Brassière", "T-Shirt"});
         configurerComboBox(comboBox);
         return comboBox;
     }
 
+    /**
+     * Crée le filtre de marque.
+     *
+     * @return : JComboBox pour les marques
+     */
     private JComboBox<String> Marque() {
         JComboBox<String> comboBox = new JComboBox<>(new String[]{"Toutes", "Nike", "Adidas", "Puma", "Asics"});
         configurerComboBox(comboBox);
         return comboBox;
     }
 
+    /**
+     * Crée le filtre pour les réductions.
+     *
+     * @return : JComboBox pour la réduction
+     */
     private JComboBox<String> Reduction() {
         JComboBox<String> comboBox = new JComboBox<>(new String[]{"Toutes", "Avec réduction", "Sans réduction"});
         configurerComboBox(comboBox);
@@ -170,6 +222,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         comboBox.setMaximumSize(new Dimension(200, 30));
     }
 
+    /**
+     * Crée le bouton pour appliquer les filtres sélectionnés.
+     *
+     * @return : JButton configuré
+     */
     private JButton boutonAppliquer() {
         JButton bouton = new JButton("Appliquer");
         bouton.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -190,6 +247,9 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Applique les filtres sélectionnés sur les articles.
+     */
     @Override
     public void appliquerFiltres() {
         String type = filtreType.getSelectedItem().toString();
@@ -199,6 +259,11 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         controleur.appliquerFiltres(type, marque, prixMax, reduction);
     }
 
+    /**
+     * Affiche la liste des articles correspondant aux filtres.
+     *
+     * @param articles : liste d'articles à afficher
+     */
     @Override
     public void afficherArticles(ArrayList<Article> articles) {
         panel_principal.removeAll();
@@ -217,6 +282,12 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
         panel_principal.repaint();
     }
 
+    /**
+     * Création du panneau pour afficher un article spécifique.
+     *
+     * @param article : l'article à afficher
+     * @return : JPanel représentant l'article
+     */
     private JPanel PanelArticle(Article article) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));

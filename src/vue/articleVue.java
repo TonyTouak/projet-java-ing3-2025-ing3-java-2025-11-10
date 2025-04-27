@@ -23,6 +23,12 @@ public class articleVue extends JFrame {
     private JLabel panierInfo;
     private JPanel prixPanel;
 
+    /**
+     * Initialise la vue d'un article avec les détails (prix, taille, promo).
+     *
+     * @param article : l'article sélectionné
+     * @param client : le client actuel
+     */
     public articleVue(Article article, Client client) {
         this.dao = new articleDaoImpl(DaoFactory.getInstance("shopping", "root", ""));
 
@@ -59,6 +65,11 @@ public class articleVue extends JFrame {
         initialisation(client);
     }
 
+    /**
+     * Initialise l'interface graphique de la vue article.
+     *
+     * @param client : le client actuel
+     */
     private void initialisation(Client client) {
         setTitle("Détails du produit");
         setSize(1000, 700);
@@ -269,6 +280,11 @@ public class articleVue extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Met à jour l'affichage des informations d'un article sélectionné
+     *
+     * @param article : l'article sélectionné
+     */
     private void mettreAJourArticle(Article article) {
         this.articleCourant = article;
 
@@ -292,16 +308,27 @@ public class articleVue extends JFrame {
         quantite.setEnabled(disponible);
     }
 
+    /**
+     * Met à jour l'affichage du nombre d'articles et du total dans le panier.
+     */
     public void mettreAJourAffichagePanier() {
         Panier panier = Panier.getInstance();
         panierInfo.setText("Panier : " + panier.getNombreArticles() + " articles - "
                 + String.format("%.2f", panier.getTotal()) + " €");
     }
 
+    /**
+     * Retourne la quantité sélectionnée.
+     *
+     * @return : la quantité choisie
+     */
     public int getQuantiteSelectionnee() {
         return (int) quantite.getValue();
     }
 
+    /**
+     * Ajoute l'article sélectionné au panier en prenant en compte du stock restant.
+     */
     //on envoie au panier l'article
     private void ajouterAuPanier() {
         int quantite_panier = (int) quantite.getValue();

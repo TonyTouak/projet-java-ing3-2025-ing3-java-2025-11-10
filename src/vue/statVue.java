@@ -10,6 +10,11 @@ import java.util.Map;
 
 public class statVue extends JFrame {
 
+    /**
+     * Constructeur de statVue.
+     *
+     * @param statDao : DAO pour accéder aux statistiques
+     */
     public statVue(statistiqueDao statDao) {
         setTitle("Statistiques des Commandes");
         setLayout(new BorderLayout());
@@ -91,6 +96,14 @@ public class statVue extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Création d'un bandeau pour afficher un chiffre clé.
+     *
+     * @param title Titre du bandeau
+     * @param value Valeur à afficher
+     * @param color Couleur de la valeur
+     * @return Un JPanel configuré
+     */
     private JPanel Bandeau(String title, String value, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);

@@ -11,6 +11,16 @@ public class adminVue extends JFrame {
 
     private JButton btnInventaire, btnPromotions, btnClients, btnStatistiques, btnDeconnexion;
 
+    /**
+     * Initialise l'interface graphique de l'espace admin.
+     *
+     * @param admin : l'administrateur connecté
+     * @param articleDao : DAO pour la gestion des articles
+     * @param clientDao : DAO pour la gestion des clients
+     * @param statDao : DAO pour la gestion des statistiques
+     * @param commandeDao : DAO pour la gestion des commandes
+     * @param articleCommandeDao : DAO pour la gestion des relations article-commande
+     */
     public adminVue(Administrateur admin, articleDaoImpl articleDao, clientDaoImpl clientDao,
                     statistiqueDaoImpl statDao, commandeDaoImpl commandeDao, articleCommandeDaoImpl articleCommandeDao) {
 
@@ -49,7 +59,6 @@ public class adminVue extends JFrame {
         infoTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
         infoTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         infoPanel.add(infoTitle);
-
 
         infoPanel.add(createLabel("🔑 ID Administrateur : " + admin.getIdAdmin()));
         infoPanel.add(Box.createVerticalStrut(15));
@@ -112,7 +121,6 @@ public class adminVue extends JFrame {
         setVisible(true);
     }
 
-
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -130,8 +138,6 @@ public class adminVue extends JFrame {
         button.setPreferredSize(new Dimension(180, 80));
         return button;
     }
-
-
 
     public JButton getBtnInventaire() { return btnInventaire; }
     public JButton getBtnPromotions() { return btnPromotions; }
