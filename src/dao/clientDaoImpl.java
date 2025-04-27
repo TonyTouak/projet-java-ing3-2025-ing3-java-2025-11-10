@@ -11,6 +11,11 @@ public class clientDaoImpl implements clientDao {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Récupère tous les clients de la base de données en joignant les informations d'utilisateur
+     *
+     * @return : Une liste contenant tous les clients
+     */
     @Override
     public ArrayList<Client> getAll() {
         ArrayList<Client> listeClients = new ArrayList<>();
@@ -41,6 +46,11 @@ public class clientDaoImpl implements clientDao {
         return listeClients;
     }
 
+    /**
+     * Ajoute un nouveau client dans la base de données en créant d'abord un utilisateur
+     *
+     * @param client : Le client à ajouter
+     */
     @Override
     public void ajouter(Client client) {
         String queryUtilisateur = "INSERT INTO utilisateur (nom, email, mot_de_passe) VALUES (?, ?, ?)";
@@ -86,6 +96,12 @@ public class clientDaoImpl implements clientDao {
     }
 
 
+    /**
+     * Cherche un client par le biais de son identifiant d'utilisateur
+     *
+     * @param idUtilisateur : L'identifiant utilisateur du client
+     * @return : le client trouvé ou un objet null sinon
+     */
     @Override
     public Client chercher(int idUtilisateur) {
         Client client = null;
@@ -117,6 +133,12 @@ public class clientDaoImpl implements clientDao {
     }
 
 
+    /**
+     * Cherche un client via son identifiant
+     *
+     * @param idClient : L'identifiant du client à chercher
+     * @return : le client si trouvé, un objet null sinon
+     */
     @Override
     public Client chercherIDCLient(int idClient) {
         Client client = null;
@@ -142,7 +164,12 @@ public class clientDaoImpl implements clientDao {
         return client;
     }
 
-
+    /**
+     * Modifie les informations d'un client
+     *
+     * @param client : le client modifié
+     * @return : Le client mis à jour
+     */
     @Override
     public Client modifier(Client client) {
         String queryClient = "UPDATE client SET adresse = ?, telephone = ? WHERE IDClient = ?";
@@ -175,6 +202,11 @@ public class clientDaoImpl implements clientDao {
         return client;
     }
 
+    /**
+     * Supprime un client et l'utilisateur associé de la base de données
+     *
+     * @param client : Le client à supprimer
+     */
     @Override
     public void supprimer(Client client) {
         String queryClient = "DELETE FROM client WHERE IDClient = ?";
@@ -201,6 +233,11 @@ public class clientDaoImpl implements clientDao {
     }
 
 
+    /**
+     * Supprime un client et l'utilisateur associé de la base de données
+     *
+     * @param idClient : L'identifiant du client à supprimer
+     */
     @Override
     public boolean supprimerID(int idClient) {
         String queryClient = "DELETE FROM client WHERE IDClient = ?";

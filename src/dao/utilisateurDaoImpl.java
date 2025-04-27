@@ -10,7 +10,11 @@ public class utilisateurDaoImpl implements utilisateurDao {
     public utilisateurDaoImpl(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
-
+/**
+ * Récupère tous les utilisateurs de la base de données
+ *
+ * @return : Une liste contenant tous les utilisateurs
+ */
     @Override
     public ArrayList<Utilisateur> getAll() {
         ArrayList<Utilisateur> listeUtilisateurs = new ArrayList<>();
@@ -37,6 +41,13 @@ public class utilisateurDaoImpl implements utilisateurDao {
         return listeUtilisateurs;
     }
 
+    /**
+     * Cherche un utilisateur à partir de son email et mot de passe (pour le login)
+     *
+     * @param email : L'email de l'utilisateur
+     * @param motDePasse : Le mot de passe de l'utilisateur
+     * @return : L'utilisateur si trouvé, un objet null sinon
+     */
     public Utilisateur chercher(String email, String motDePasse) {
         Utilisateur utilisateur = null;
         String query = "SELECT * FROM utilisateur WHERE email = ? AND mot_de_passe = ?";
