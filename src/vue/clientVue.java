@@ -82,7 +82,7 @@ public class clientVue extends JFrame {
                 List<ArticleCommande> articlesCommandes = articleCommandeDao.getArticlesParCommande(commande.getId());
 
                 for (ArticleCommande ac : articlesCommandes) {
-                    Article article = articleDao.getArticleParId(ac.getIdArticle());
+                    Article article = articleDao.chercher(ac.getIdArticle());
 
                     if (article != null) {
                         JPanel articlePanel = new JPanel();

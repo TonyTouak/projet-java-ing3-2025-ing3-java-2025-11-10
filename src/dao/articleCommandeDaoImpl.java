@@ -12,6 +12,12 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Récupère tous les articles d'une commande à partir de l'identifiant de la commande
+     *
+     * @param idCommande : L'identifiant de la commande en question
+     * @return : Une liste des articles faisant partie de la commande
+     */
     @Override
     public List<ArticleCommande> getArticlesParCommande(int idCommande) {
         List<ArticleCommande> articles = new ArrayList<>();
@@ -39,6 +45,12 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
         return articles;
     }
 
+    /**
+     * Supprime tous les articles liées à une commande
+     *
+     * @param idCommande L'identifiant de la commande
+     * @throws Exception Si la suppression présente un problème
+     */
     @Override
     public void supprimerLignesCommande(int idCommande) throws Exception {
         String sql = "DELETE FROM articlecommande WHERE IDCommande = ?";
@@ -51,23 +63,13 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
         }
     }
 
-    @Override
-    public boolean decrementerStock(Connection connection, int idArticle, int quantite) {
-        String sql = "UPDATE article SET quantite = quantite - ? WHERE IDArticle = ? AND quantite >= ?";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, quantite);
-            ps.setInt(2, idArticle);
-            ps.setInt(3, quantite);
-
-
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Erreur décrément stock: " + e.getMessage());
-            return false;
-        }
-    }
-
+    /**
+     * Ajoute un article à une commande avec sa quantité
+     *
+     * @param connection : La connexion à la base de données
+     * @param ac : l'article commandé à ajouter à la base de données
+     * @return : true si l'ajout est réussi sinon false
+     */
     @Override
     public boolean ajouterLigneCommande(Connection connection, ArticleCommande ac) {
         String sql = "INSERT INTO articlecommande (IDArticle, IDCommande, quantite, prix) VALUES (?, ?, ?, ?)";
@@ -86,6 +88,11 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
     }
 
 
+    /**
+     * Met à jour la quantité et le prix d'un article dans une commande existante (droit d'un administrateur)
+     *
+     * @param articleCommande : L'article commandé modifié
+     */
     @Override
     public void mettreAJourLigneCommande(ArticleCommande articleCommande) {
         Connection connexion = null;

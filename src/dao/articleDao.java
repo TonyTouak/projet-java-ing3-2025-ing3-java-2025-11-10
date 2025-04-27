@@ -14,15 +14,13 @@ public interface articleDao {
 
     Article chercher(int idArticle);
 
-    Article modifier(Article article);
-
     void supprimer(Article article);
 
-    Article getArticleParId(int id);
+    ArrayList<Article> getArticlesParPageHomme(int page, int taillePage);
+
+    ArrayList<Article> getArticlesParPageFemme(int page, int taillePage);
 
     List<Article> getVariantesParArticle(String marque, String type, String sexe, String nom);
-
-    Article getArticleParAttributsEtTaille(String marque, String type, String sexe, String nom, String taille);
 
     void mettreAJour(Article article) throws SQLException;
 

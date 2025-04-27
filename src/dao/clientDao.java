@@ -17,6 +17,5 @@ public interface clientDao {
 
     void supprimer(Client client);
 
-
     boolean supprimerID(int idClient);
 }

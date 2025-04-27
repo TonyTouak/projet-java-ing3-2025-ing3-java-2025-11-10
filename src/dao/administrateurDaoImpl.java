@@ -11,6 +11,11 @@ public class administrateurDaoImpl implements administrateurDao {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Récupère tous les administrateurs de la base de données en joignant les informations de l'utilisateur
+     *
+     * @return : Une liste contenant tous les administrateurs
+     */
     @Override
     public ArrayList<Administrateur> getAll() {
         ArrayList<Administrateur> listeAdmins = new ArrayList<>();
@@ -38,6 +43,11 @@ public class administrateurDaoImpl implements administrateurDao {
         return listeAdmins;
     }
 
+    /**
+     * Ajoute un nouvel administrateur dans la base de données en créant d'abord un utilisateur
+     *
+     * @param admin : L'administrateur que l'on souhaite ajouter
+     */
     @Override
     public void ajouter(Administrateur admin) {
         String queryUtilisateur = "INSERT INTO Utilisateur (nom, email, mot_de_passe) VALUES (?, ?, ?)";
@@ -78,6 +88,13 @@ public class administrateurDaoImpl implements administrateurDao {
         }
     }
 
+
+    /**
+     * Cherche un administrateur dans la base de données à partir de son identifiant d'utilisateur
+     *
+     * @param idUtilisateur : L'identifiant utilisateur de l'administrateur.
+     * @return : L'administrateur trouvé ou un objet null
+     */
     @Override
     public Administrateur chercher(int idUtilisateur) {
         Administrateur admin = null;
@@ -107,6 +124,11 @@ public class administrateurDaoImpl implements administrateurDao {
     }
 
 
+    /**
+     * Supprime un administrateur de la base de données et l'utilisateur associé
+     *
+     * @param admin : L'administrateur à supprimer
+     */
     @Override
     public void supprimer(Administrateur admin) {
         String queryAdmin = "DELETE FROM Administrateur WHERE IDAdmin = ?";

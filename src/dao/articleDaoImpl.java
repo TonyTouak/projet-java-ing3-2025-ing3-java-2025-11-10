@@ -12,6 +12,11 @@ public class articleDaoImpl implements articleDao {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Récupère tous les articles de la base de données
+     *
+     * @return : Une liste contenant tous les articles
+     */
     @Override
     public ArrayList<Article> getAll() {
         ArrayList<Article> listeArticles = new ArrayList<>();
@@ -49,6 +54,11 @@ public class articleDaoImpl implements articleDao {
         return listeArticles;
     }
 
+    /**
+     * Ajoute un nouvel article dans la base de données
+     *
+     * @param article : L'article à ajouter
+     */
     @Override
     public void ajouter(Article article) {
         String query = "INSERT INTO article (prix_unique, prix_vrac, marque, quantite_vrac, taille, type, nom, image, sexe, quantite, reduction) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -84,6 +94,12 @@ public class articleDaoImpl implements articleDao {
         }
     }
 
+    /**
+     * Cherche un article dans la base de données en fonction de son identifiant
+     *
+     * @param idArticle : L'identifiant de l'article
+     * @return : L'article correspondant s'il est trouvé ou un objet null
+     */
     @Override
     public Article chercher(int idArticle) {
         Article article = null;
@@ -121,41 +137,12 @@ public class articleDaoImpl implements articleDao {
         return article;
     }
 
-    @Override
-    public Article modifier(Article article) {
-        String query = "UPDATE article SET prix_unique = ?, prix_vrac = ?, marque = ?, quantite_vrac = ?, type = ?, taille = ?, nom = ?, image = ?, sexe = ?, reduction = ? WHERE IDArticle = ?";
 
-        try (Connection connexion = daoFactory.getConnection();
-             PreparedStatement preparedStatement = connexion.prepareStatement(query)) {
-
-            preparedStatement.setDouble(1, article.getPrixUnique());
-            preparedStatement.setDouble(2, article.getPrixVrac());
-            preparedStatement.setString(3, article.getMarque());
-            preparedStatement.setInt(4, article.getQuantiteVrac());
-            preparedStatement.setString(5, article.getType());;
-            preparedStatement.setString(6, article.getTaille());
-            preparedStatement.setString(7, article.getNom());
-            preparedStatement.setString(8, article.getImage());
-            preparedStatement.setString(9, article.getSexe());
-            preparedStatement.setInt(10, article.getQuantite());
-            preparedStatement.setInt(11, article.getId());
-            preparedStatement.setDouble(12, article.getReduction());
-
-
-
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("Mise à jour échouée : article non trouvé");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Mise à jour de l'article impossible");
-        }
-
-        return article;
-    }
-
+    /**
+     * Supprime un article de la base de données
+     *
+     * @param article : L'article à supprimer
+     */
     @Override
     public void supprimer(Article article) {
         String query = "DELETE FROM article WHERE IDArticle = ?";
@@ -171,6 +158,14 @@ public class articleDaoImpl implements articleDao {
         }
     }
 
+    /**
+     * Récupère tous les articles pour homme
+     *
+     * @param page : Le numéro de la page souhaitée
+     * @param taillePage : Le nombre d'articles par page
+     * @return : La liste des articles pour homme
+     */
+    @Override
     public ArrayList<Article> getArticlesParPageHomme(int page, int taillePage) {
         ArrayList<Article> listeArticles = new ArrayList<>();
         int offset = (page - 1) * taillePage;
@@ -211,40 +206,14 @@ public class articleDaoImpl implements articleDao {
         return listeArticles;
     }
 
+    /**
+     * Récupère tous les articles pour femme
+     *
+     * @param page : Le numéro de la page souhaitée
+     * @param taillePage : Le nombre d'articles par page
+     * @return : La liste des articles pour femme
+     */
     @Override
-    public Article getArticleParId(int id) {
-        Article article = null;
-        try (Connection con = daoFactory.getConnexion();
-             PreparedStatement ps = con.prepareStatement("SELECT * FROM article WHERE IDArticle = ?")) {
-
-            ps.setInt(1, id);
-            ResultSet resultats = ps.executeQuery();
-
-            if (resultats.next()) {
-                int idArticle = resultats.getInt("IDArticle");
-                double prixUnique = resultats.getDouble("prix_unique");
-                double prixVrac = resultats.getDouble("prix_vrac");
-                String marque = resultats.getString("marque");
-                int quantiteVrac = resultats.getInt("quantite_vrac");
-                String taille = resultats.getString("taille");
-                String type = resultats.getString("type");
-                String nom = resultats.getString("nom");
-                String image = resultats.getString("image");
-                String sexe = resultats.getString("sexe");
-                int quantite = resultats.getInt("quantite");
-                double reduction = resultats.getDouble("reduction");
-
-
-                article = new Article(idArticle, prixUnique, prixVrac, marque, quantiteVrac, taille, type, nom, image, sexe, quantite, reduction);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return article;
-    }
-
-
-
     public ArrayList<Article> getArticlesParPageFemme(int page, int taillePage) {
         ArrayList<Article> listeArticles = new ArrayList<>();
         int offset = (page - 1) * taillePage;
@@ -286,7 +255,15 @@ public class articleDaoImpl implements articleDao {
     }
 
 
-
+    /**
+     * Récupère toutes les informations qui sont intéressantes à afficher
+     *
+     * @param marque : La marque de l'article.
+     * @param type : Le type de l'article.
+     * @param sexe : Le sexe qui porte l'article.
+     * @param nom : Le nom de l'article.
+     * @return : Une l iste attributs intéressants
+     */
     @Override
     public List<Article> getVariantesParArticle(String marque, String type, String sexe, String nom) {
         List<Article> variantes = new ArrayList<>();
@@ -309,28 +286,15 @@ public class articleDaoImpl implements articleDao {
         return variantes;
     }
 
-    @Override
-    public Article getArticleParAttributsEtTaille(String marque, String type, String sexe, String nom, String taille) {
-        try {
-            Connection connexion = daoFactory.getConnection();
-            String sql = "SELECT * FROM article WHERE marque = ? AND type = ? AND sexe = ? AND nom = ? AND taille = ?";
-            PreparedStatement statement = connexion.prepareStatement(sql);
-            statement.setString(1, marque);
-            statement.setString(2, type);
-            statement.setString(3, sexe);
-            statement.setString(4, nom);
-            statement.setString(5, taille);
 
-            ResultSet result = statement.executeQuery();
-            if (result.next()) {
-                return mapper(result);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+    /**
+     * Convertit un objet de type ResultSet en un article, utile pour obtenir
+     * les infos qui nous intéressent pour l'affichage des articles dans le magasin
+     *
+     * @param result : L'objet resultSet à convertir
+     * @return : l'article obtenue
+     * @throws SQLException
+     */
     private Article mapper(ResultSet result) throws SQLException {
         return new Article(
                 result.getInt("IDArticle"),
@@ -348,6 +312,12 @@ public class articleDaoImpl implements articleDao {
                 );
     }
 
+    /**
+     * Met à jour la quantité d'un article dans la base de données.
+     *
+     * @param article : L'article dont la quantité doit être modifiée
+     * @throws SQLException
+     */
     @Override
     public void mettreAJour(Article article) throws SQLException {
         String sql = "UPDATE article SET quantite = ? WHERE IDArticle = ?";
@@ -362,6 +332,15 @@ public class articleDaoImpl implements articleDao {
     }
 
 
+    /**
+     * Décrémente le stock d'un article qui a été acheté ou ajouter au panier
+     *
+     * @param connection : La connexion à la base de données
+     * @param idArticle : L'identifiant de l'article à modifier
+     * @param quantite : La quantité à enlever
+     * @return : true si la quantité a bien été retiré, false sinon
+     * @throws SQLException
+     */
     @Override
     public boolean decrementerStock(Connection connection, int idArticle, int quantite) throws SQLException {
         String sql = "UPDATE article SET quantite = quantite - ? WHERE IDArticle = ? AND quantite >= ?";
@@ -374,7 +353,13 @@ public class articleDaoImpl implements articleDao {
         }
     }
 
-
+    /**
+     * Vérifie si un article possède une quantité suffisante en stock
+     *
+     * @param idArticle : L'identifiant de l'article à vérifier
+     * @param quantite : La quantité demandée de l'article
+     * @return : true si on possède suffisamment l'article en stock, sinon false
+     */
     @Override
     public boolean verifierStock(int idArticle, int quantite) {
         String sql = "SELECT quantite FROM article WHERE IDArticle = ?";
@@ -395,6 +380,12 @@ public class articleDaoImpl implements articleDao {
         return false;
     }
 
+    /**
+     * Applique une réduction à un article (droit d'un administrateur)
+     *
+     * @param idArticle : L'identifiant de l'article en promotion
+     * @param pourcentage_reduction : Le pourcentage de réduction à appliquer
+     */
     public void appliquerReduction(int idArticle, double pourcentage_reduction) {
         try (Connection connexion = daoFactory.getConnection()) {
             String sql = "UPDATE article SET reduction = ? WHERE IDArticle = ?";

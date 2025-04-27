@@ -12,6 +12,11 @@ public class statistiqueDaoImpl implements statistiqueDao {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Récupère le nombre total de commandes enregistrées dans la base de données
+     *
+     * @return : Le nombre total de commandes
+     */
     @Override
     public int getNombreTotalCommandes() {
         String query = "SELECT COUNT(*) FROM commande";
@@ -27,6 +32,11 @@ public class statistiqueDaoImpl implements statistiqueDao {
         return 0;
     }
 
+    /**
+     * Calcule le montant total des ventes, soit le chiffre d'affaires
+     *
+     * @return : Le montant total des ventes.
+     */
     @Override
     public double getMontantTotalVentes() {
         String query = "SELECT ac.IDArticle, SUM(ac.quantite) AS quantiteVendue " +
@@ -53,6 +63,12 @@ public class statistiqueDaoImpl implements statistiqueDao {
         return totalVentes;
     }
 
+
+    /**
+     * Récupère la quantité totale vendue pour chaque article
+     *
+     * @return : Une map contenant les articles et leurs quantités vendues
+     */
     @Override
     public Map<Article, Integer> getQuantitesVenduesParArticle() {
         Map<Article, Integer> ventesParArticle = new HashMap<>();
@@ -80,6 +96,12 @@ public class statistiqueDaoImpl implements statistiqueDao {
         return ventesParArticle;
     }
 
+    /**
+     * Récupère un article à partir de son identifiant
+     *
+     * @param idArticle : L'ID de l'article à chercher
+     * @return : l'article si trouvé ou un objet null sinon
+     */
     private Article getArticleById(int idArticle) {
         String query = "SELECT * FROM article WHERE IDArticle = ?";
         try (Connection connection = daoFactory.getConnection();

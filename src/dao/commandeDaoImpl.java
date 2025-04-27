@@ -17,6 +17,13 @@ public class commandeDaoImpl implements commandeDao {
 
     }
 
+
+    /**
+     * Récupère toutes les commandes de la base de données
+     *
+     * @return : Une liste contenant toutes les commandes
+     * @throws SQLException
+     */
     @Override
     public ArrayList<Commande> getAll() throws SQLException {
         ArrayList<Commande> listeCommandes = new ArrayList<>();
@@ -33,6 +40,13 @@ public class commandeDaoImpl implements commandeDao {
         return listeCommandes;
     }
 
+    /**
+     * Ajoute une nouvelle commande à la base de données
+     *
+     * @param commande : La commande à ajouter
+     * @return : L'identifiant de la commande créée
+     * @throws SQLException
+     */
     @Override
     public int ajouter(Commande commande) throws SQLException {
         String query = "INSERT INTO commande (IDClient, date, prix) VALUES (?, ?, ?)";
@@ -55,6 +69,12 @@ public class commandeDaoImpl implements commandeDao {
         }
     }
 
+    /**
+     * Récupère les commandes associées à un client donné pour les afficher sur son espace
+     *
+     * @param idClient : L'identifiant du client
+     * @return : la liste des commandes du client
+     */
     @Override
     public List<Commande> getCommandesParClient(int idClient) {
         List<Commande> commandes = new ArrayList<>();
@@ -97,7 +117,13 @@ public class commandeDaoImpl implements commandeDao {
 
 
 
-
+    /**
+     * Cherche une commande dans la base de données à partir de son identifiant
+     *
+     * @param idCommande : L'identifiant de la commande à chercher
+     * @return : La commande si elle est trouvée, sinon un objet null
+     * @throws SQLException
+     */
     @Override
     public Commande chercher(int idCommande) throws SQLException {
         String query = "SELECT * FROM commande WHERE IDCommande = ?";
@@ -115,6 +141,12 @@ public class commandeDaoImpl implements commandeDao {
         return null;
     }
 
+    /**
+     * Supprime une commande de la base de données
+     *
+     * @param commande : La commande à supprimer
+     * @throws SQLException
+     */
     @Override
     public void supprimer(Commande commande) throws SQLException {
         String query = "DELETE FROM commande WHERE IDCommande = ?";
@@ -127,72 +159,15 @@ public class commandeDaoImpl implements commandeDao {
         }
     }
 
-    @Override
-    public boolean validerCommandeComplete(Client client, Map<Article, Integer> articlesPanier) {
-        Connection connection = null;
-        try {
-            connection = daoFactory.getConnection();
-            connection.setAutoCommit(false);
 
-            float montantTotal = calculerTotalPanier(articlesPanier);
-
-            Commande commande = new Commande();
-            commande.setClient(client);
-            commande.setDate(new Date());
-            commande.setPrix(montantTotal);
-
-            int idCommande = insererCommande(connection, commande);
-            if (idCommande == -1) {
-                connection.rollback();
-                return false;
-            }
-
-            articleCommandeDao articleCmdDao = new articleCommandeDaoImpl(daoFactory);
-            articleDao articleDao = new articleDaoImpl(daoFactory);
-
-            for (Map.Entry<Article, Integer> entry : articlesPanier.entrySet()) {
-                Article article = entry.getKey();
-                int quantite = entry.getValue();
-
-                if (!articleDao.verifierStock(article.getId(), quantite)) {
-                    connection.rollback();
-                    return false;
-                }
-
-                ArticleCommande ac = new ArticleCommande(article.getId(), idCommande, quantite, article.calculerPrix(quantite));
-                if (!articleCmdDao.ajouterLigneCommande(connection, ac)) {
-                    connection.rollback();
-                    return false;
-                }
-
-                if (!articleDao.decrementerStock(connection, article.getId(), quantite)) {
-                    connection.rollback();
-                    return false;
-                }
-            }
-
-            connection.commit();
-            return true;
-        } catch (SQLException e) {
-            try {
-                if (connection != null) connection.rollback();
-            } catch (SQLException ex) {
-                System.err.println("Erreur rollback: " + ex.getMessage());
-            }
-            System.err.println("Erreur commande: " + e.getMessage());
-            return false;
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                } catch (SQLException e) {
-                    System.err.println("Erreur fermeture connexion: " + e.getMessage());
-                }
-            }
-        }
-    }
-
+    /**
+     * Finalise une commande en enregistrant les articles et en ajustant le stock
+     *
+     * @param client : Le client qui passe la commande
+     * @param panier : Le panier contenant les articles à commande.
+     * @param articleCmdDao : La dao des articles commandés
+     * @param articleDao : Le dao des articles pour modifier la quantité
+     */
     @Override
     public void finaliserCommande(Client client, Panier panier,
                                   articleCommandeDao articleCmdDao,
@@ -222,7 +197,13 @@ public class commandeDaoImpl implements commandeDao {
     }
 
 
-
+    /**
+     * Insère une nouvelle commande dans la base de données et retourne son identifiant
+     *
+     * @param connection : La connexion à la base de données
+     * @param commande : La commande ajoutée
+     * @return : L'identifiant de la commande ajoutée
+     */
     private int insererCommande(Connection connection, Commande commande) {
         String sql = "INSERT INTO commande (IDClient, date, prix) VALUES (?, ?, ?)";
 
@@ -245,6 +226,13 @@ public class commandeDaoImpl implements commandeDao {
         return -1;
     }
 
+    /**
+     * Crée un commande à partir des résultats d'une requête SQL
+     *
+     * @param rs : Le ResultSet contenant les données de la commande
+     * @return : la commande créée
+     * @throws SQLException
+     */
     @Override
     public Commande creerCommandeDepuisResultSet(ResultSet rs) throws SQLException {
         return new Commande(
@@ -255,6 +243,14 @@ public class commandeDaoImpl implements commandeDao {
         );
     }
 
+    /**
+     * Crée une nouvelle commande avec l'id du client et le prix de la commande
+     *
+     * @param idClient : L'identifiant du client passant la commande
+     * @param prixTotal : Le prix de la commande
+     * @return : L'identifiant de la commande générée
+     * @throws SQLException
+     */
     @Override
     public int creerNouvelleCommande(int idClient, float prixTotal) throws SQLException {
         String sql = "INSERT INTO commande (IDClient, date, prix, quantite) VALUES (?, NOW(), ?, ?)";
@@ -277,16 +273,25 @@ public class commandeDaoImpl implements commandeDao {
         throw new SQLException("Échec de la création de commande, aucun ID généré");
     }
 
+    /**
+     * Calcule le prix du panier en fonction des articles et quantités
+     *
+     * @param articlesPanier : Une map contenant les articles et leurs quantités
+     * @return : Le montant du panier
+     */
     private float calculerTotalPanier(Map<Article, Integer> articlesPanier) {
-        return (float) articlesPanier.entrySet().stream()
+        return (float) articlesPanier.entrySet().stream()//pour chaque article, on récupère son prix et on le multiplie par sa quantité
                 .mapToDouble(e -> e.getKey().getPrixUnique() * e.getValue())
                 .sum();
     }
 
-    private int calculerQuantiteTotale(Map<Article, Integer> articlesPanier) {
-        return articlesPanier.values().stream().mapToInt(Integer::intValue).sum();
-    }
 
+    /**
+     * Récupère toutes les commandes passées par un client via son identifiant
+     *
+     * @param idClient : L'identifiant du client
+     * @return : Une liste contenant toutes ses commandes
+     */
     @Override
     public List<Commande> getCommandesParClientID(int idClient) {
         List<Commande> commandes = new ArrayList<>();
@@ -319,6 +324,12 @@ public class commandeDaoImpl implements commandeDao {
         return commandes;
     }
 
+    /**
+     * Récupère tous les articles d'une commande
+     *
+     * @param idCommande : L'identifiant de la commande
+     * @return : la liste des articles dans la commande
+     */
     private List<Article> getArticlesParCommande(int idCommande) {
         List<Article> articles = new ArrayList<>();
         String query = "SELECT a.* FROM articlecommande ac " +
@@ -356,29 +367,12 @@ public class commandeDaoImpl implements commandeDao {
     }
 
 
-    @Override
-    public List<Commande> listerToutes() throws SQLException {
-        List<Commande> commandes = new ArrayList<>();
-        String sql = "SELECT * FROM commande";
-        try (Connection conn = daoFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                Commande cmd = new Commande();
-                cmd.setId(rs.getInt("IDCommande"));
-                cmd.setDate(rs.getDate("date"));
-
-                int idClient = rs.getInt("IDClient");
-                Client client = new clientDaoImpl(daoFactory).chercher(idClient);
-                cmd.setClient(client);
-
-                commandes.add(cmd);
-            }
-        }
-        return commandes;
-    }
-
+    /**
+     * Met à jour les informations d'une commande
+     *
+     * @param commande : La commande modifiée
+     */
     @Override
     public void mettreAJour(Commande commande) {
         Connection connexion = null;
