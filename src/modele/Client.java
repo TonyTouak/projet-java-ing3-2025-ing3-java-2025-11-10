@@ -21,6 +21,12 @@ public class Client extends Utilisateur {
 
     }
 
+    //on ajoute un constructeur vide utilisé notamment pour l'inventaireVue
+    public Client() {
+        super();
+    }
+
+
     public int getIDClient() {
         return IDClient;
     }
@@ -46,6 +52,11 @@ public class Client extends Utilisateur {
     }
 
 
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
-
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
 }

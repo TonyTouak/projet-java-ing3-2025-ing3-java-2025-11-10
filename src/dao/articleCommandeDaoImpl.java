@@ -27,7 +27,9 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
                     articles.add(new ArticleCommande(
                             rs.getInt("IDArticle"),
                             rs.getInt("IDCommande"),
-                            rs.getInt("quantite")
+                            rs.getInt("quantite"),
+                            rs.getFloat("prix")
+
                     ));
                 }
             }
@@ -58,6 +60,7 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
             ps.setInt(2, idArticle);
             ps.setInt(3, quantite);
 
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Erreur décrément stock: " + e.getMessage());
@@ -67,16 +70,68 @@ public class articleCommandeDaoImpl implements articleCommandeDao {
 
     @Override
     public boolean ajouterLigneCommande(Connection connection, ArticleCommande ac) {
-        String sql = "INSERT INTO articlecommande (IDArticle, IDCommande, quantite) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO articlecommande (IDArticle, IDCommande, quantite, prix) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, ac.getIdArticle());
             ps.setInt(2, ac.getIdCommande());
             ps.setInt(3, ac.getQuantite());
+            ps.setFloat(4, ac.getPrix());
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Erreur lors de l'ajout de la ligne de commande: " + e.getMessage());
             return false;
         }
     }
+
+
+    @Override
+    public void mettreAJourLigneCommande(ArticleCommande articleCommande) {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connexion = daoFactory.getConnexion();
+            String sql = "UPDATE articlecommande SET quantite = ?, prix = ? " +
+                    "WHERE IDArticle = ? AND IDCommande = ?";
+
+            preparedStatement = connexion.prepareStatement(sql);
+
+            preparedStatement.setInt(1, articleCommande.getQuantite());
+            preparedStatement.setFloat(2, articleCommande.getPrix());
+            preparedStatement.setInt(3, articleCommande.getIdArticle());
+            preparedStatement.setInt(4, articleCommande.getIdCommande());
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if (rowsUpdated == 0) {
+                System.err.println("Aucune ligne mise à jour pour ArticleCommande: " +
+                        articleCommande.getIdArticle() + ", " +
+                        articleCommande.getIdCommande());
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la mise à jour de ArticleCommande:");
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    System.err.println("Erreur fermeture PreparedStatement:");
+                    e.printStackTrace();
+                }
+            }
+            if (connexion != null) {
+                try {
+                    connexion.close();
+                } catch (SQLException e) {
+                    System.err.println("Erreur fermeture Connection:");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 }
