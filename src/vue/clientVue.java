@@ -9,12 +9,12 @@ import modele.Commande;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class clientVue extends JFrame {
 
-    private Client client;
+    private static final String IMAGE_FOLDER = "Images/"; // <== Correction ici
+    private final Client client;
 
     public clientVue(Client client) {
         this.client = client;
@@ -54,12 +54,10 @@ public class clientVue extends JFrame {
         titreCommandes.setFont(new Font("SansSerif", Font.BOLD, 18));
         contentPanel.add(titreCommandes);
 
-
         DaoFactory daoFactory = DaoFactory.getInstance("shopping", "root", "");
         articleDao articleDao = new articleDaoImpl(daoFactory);
         articleCommandeDao articleCommandeDao = new articleCommandeDaoImpl(daoFactory);
         commandeDao commandeDao = new commandeDaoImpl(daoFactory);
-
 
         List<Commande> commandes = commandeDao.getCommandesParClient(client.getIDClient());
         if (commandes.isEmpty()) {
@@ -93,11 +91,11 @@ public class clientVue extends JFrame {
                         articlePanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 10));
                         articlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-                        String imagePath = "./images/" + article.getImage();
+                        String imagePath = IMAGE_FOLDER + article.getImage(); // <-- Correction
                         File imageFile = new File(imagePath);
                         JLabel imgLabel;
                         if (imageFile.exists()) {
-                            ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
+                            ImageIcon icon = new ImageIcon(imagePath);
                             Image scaled = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
                             imgLabel = new JLabel(new ImageIcon(scaled));
                         } else {
@@ -121,8 +119,6 @@ public class clientVue extends JFrame {
             }
         }
 
-
-
         contentPanel.add(Box.createVerticalStrut(20));
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -134,7 +130,6 @@ public class clientVue extends JFrame {
             new loginVue();
         });
         contentPanel.add(btnDeconnexion);
-
 
         JScrollPane scroll = new JScrollPane(contentPanel);
         scroll.setBorder(null);
@@ -151,44 +146,5 @@ public class clientVue extends JFrame {
         label.setFont(new Font("SansSerif", Font.PLAIN, 16));
         label.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         return label;
-    }
-
-    private JPanel creerPanelCommande(Commande commande, Article article, int quantite) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(10, 0, 20, 0)
-        ));
-
-        // Image
-        String imagePath = "Images/" + article.getImage() + ".png";
-        File imageFile = new File(imagePath);
-        if (imageFile.exists()) {
-            ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
-            Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JLabel imgLabel = new JLabel(new ImageIcon(scaled));
-            imgLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            panel.add(imgLabel);
-        } else {
-            panel.add(createLabel("[Image introuvable]"));
-        }
-
-        // Nom
-        JLabel nomArticle = new JLabel(article.getNom());
-        nomArticle.setFont(new Font("SansSerif", Font.BOLD, 16));
-        nomArticle.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(nomArticle);
-
-        // Détail
-        float prixTotal = article.calculerPrix(quantite);
-        String details = "Commande du " + commande.getDate() +
-                " | " + quantite + " x → " + prixTotal + " €";
-        JLabel infos = createLabel(details);
-        infos.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(infos);
-
-        return panel;
     }
 }
