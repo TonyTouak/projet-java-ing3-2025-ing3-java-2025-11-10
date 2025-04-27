@@ -9,11 +9,17 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 public class gestionClientVue extends JFrame {
     private clientDaoImpl clientDao;
     private JTable tableClients;
     private DefaultTableModel tableModel;
 
+    /**
+     * Initialise la vue de gestion des clients.
+     *
+     * @param clientDao : DAO pour accéder aux données des clients
+     */
     public gestionClientVue(clientDaoImpl clientDao) {
         this.clientDao = clientDao;
         initialisationAffichage();
@@ -66,6 +72,9 @@ public class gestionClientVue extends JFrame {
 
     }
 
+    /**
+     * Initialise l'affichage du tableau des clients.
+     */
     private void affichageClients() {
         String[] colonnes = {"ID", "Nom", "Email", "Adresse", "Téléphone"};
         tableModel = new DefaultTableModel(colonnes, 0) {
@@ -80,6 +89,9 @@ public class gestionClientVue extends JFrame {
         Table();
     }
 
+    /**
+     * Configure le tableau affichant les clients.
+     */
     private void Table() {
         tableClients.setRowHeight(35);
         tableClients.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -147,6 +159,9 @@ public class gestionClientVue extends JFrame {
         return button;
     }
 
+    /**
+     * Charge la liste des clients et l'affiche dans le tableau.
+     */
     private void chargerClients() {
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
@@ -168,6 +183,9 @@ public class gestionClientVue extends JFrame {
         worker.execute();
     }
 
+    /**
+     * Permet de modifier les informations d'un client sélectionné.
+     */
     private void modifierClient() {
         int row = tableClients.getSelectedRow();
         if (row == -1) {
@@ -220,6 +238,9 @@ public class gestionClientVue extends JFrame {
         }
     }
 
+    /**
+     * Permet de supprimer un client sélectionné.
+     */
     private void supprimerClient() {
         int row = tableClients.getSelectedRow();
         // on regarde si l'admin a bien sélectionné un client
@@ -245,6 +266,13 @@ public class gestionClientVue extends JFrame {
         }
     }
 
+    /**
+     * Affiche un message d'information ou d'erreur.
+     *
+     * @param message : le message à afficher
+     * @param title : le titre de la boîte de dialogue
+     * @param messageType : le type de message (information, erreur)
+     */
     private void showMessage(String message, String title, int messageType) {
         JOptionPane.showMessageDialog(this, message, title, messageType);
     }

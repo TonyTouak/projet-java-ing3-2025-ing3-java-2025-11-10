@@ -28,7 +28,14 @@ public class paiementVue extends JFrame {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
     private final Consumer<Boolean> callback;
 
-
+    /**
+     * Constructeur de paiementVue.
+     *
+     * @param client : le client en cours de paiement
+     * @param panier : le panier associé au client
+     * @param montantTotal : le montant total à payer
+     * @param callback : callback pour notifier du succès du paiement
+     */
     public paiementVue(Client client, Panier panier, float montantTotal, Consumer<Boolean> callback) {
         this.client = client;
         this.panier = panier;
@@ -48,6 +55,9 @@ public class paiementVue extends JFrame {
         chargerCartesEnregistrees();
     }
 
+    /**
+     * Configure l'interface graphique de la fenêtre de paiement.
+     */
     private void configurerUI() {
         setTitle("Paiement sécurisé");
         setSize(600, 500);
@@ -102,6 +112,13 @@ public class paiementVue extends JFrame {
         add(content, BorderLayout.CENTER);
     }
 
+    /**
+     * Crée un panneau avec un label et un champ de saisie.
+     *
+     * @param label : le texte du label
+     * @param field : le champ associé
+     * @return : un JPanel contenant le label et le champ
+     */
     private JPanel creerChamp(String label, JComponent field) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.add(new JLabel(label));
@@ -110,6 +127,9 @@ public class paiementVue extends JFrame {
         return panel;
     }
 
+    /**
+     * Charge et affiche les cartes de paiement déjà enregistrées pour le client.
+     */
     private void chargerCartesEnregistrees() {
         cartesPanel.removeAll();
         List<Paiement> cartes = controleur.getCartesClient();
@@ -145,6 +165,9 @@ public class paiementVue extends JFrame {
         cartesPanel.repaint();
     }
 
+    /**
+     * Valide et traite le paiement selon les informations saisies ou sélectionnées.
+     */
     public void validerPaiement() {
         try {
             if (groupeCartes.getSelection() != null) {
@@ -173,15 +196,27 @@ public class paiementVue extends JFrame {
         }
     }
 
-
+    /**
+     * Affiche une fenêtre d'information indiquant l'absence de cartes enregistrées.
+     *
+     * @param cartes : liste de paiements existants
+     */
     public void afficherCartes(List<Paiement> cartes) {
         JOptionPane.showMessageDialog(this, "Aucune carte enregistrée");
     }
 
+    /**
+     * Affiche une erreur dans une fenêtre d'alerte.
+     *
+     * @param message : message d'erreur à afficher
+     */
     public void afficherErreur(String message) {
         JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Affiche une confirmation lorsque le paiement est réussi et ferme la fenêtre.
+     */
     public void paiementReussi() {
         JOptionPane.showMessageDialog(this, "Paiement effectué avec succès !");
         this.callback.accept(true);

@@ -32,6 +32,13 @@ public class inventaireVue extends JFrame {
     private JPanel panelDetails;
     private JLabel headerDetailsLabel;
 
+    /**
+     * Initialise la vue de gestion des commandes.
+     *
+     * @param articleDao : DAO pour les articles
+     * @param commandeDao : DAO pour les commandes
+     * @param articleCommandeDao : DAO pour les relations articles-commandes
+     */
     public inventaireVue(articleDaoImpl articleDao, commandeDaoImpl commandeDao, articleCommandeDaoImpl articleCommandeDao) {
         this.articleDao = articleDao;
         this.commandeDao = commandeDao;
@@ -41,6 +48,9 @@ public class inventaireVue extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Initialise l'interface graphique générale.
+     */
     private void initialisationAffichage() {
         setTitle("Gestion des Commandes");
         setSize(1200, 800);
@@ -108,6 +118,11 @@ public class inventaireVue extends JFrame {
         return header;
     }
 
+    /**
+     * Crée le panneau affichant la liste des commandes.
+     *
+     * @return : un JPanel contenant le tableau des commandes
+     */
     private JPanel Commandes() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -167,6 +182,11 @@ public class inventaireVue extends JFrame {
         });
     }
 
+    /**
+     * Crée le panneau contenant les boutons d'action sur les commandes.
+     *
+     * @return : un JPanel contenant les boutons
+     */
     private JPanel Boutons() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
@@ -204,6 +224,9 @@ public class inventaireVue extends JFrame {
         return button;
     }
 
+    /**
+     * Charge toutes les commandes depuis la base de données.
+     */
     private void chargerCommandes() {
         // on utilise un SwingWorker pour charger les commandes sans affecter l'interface
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
@@ -232,6 +255,9 @@ public class inventaireVue extends JFrame {
         worker.execute();
     }
 
+    /**
+     * Affiche les détails d'une commande sélectionnée.
+     */
     private void afficherDetailsCommande() {
         for (int i = panelDetails.getComponentCount() - 1; i >= 1; i--) {
             panelDetails.remove(i);
@@ -287,6 +313,12 @@ public class inventaireVue extends JFrame {
         panelDetails.repaint();
     }
 
+    /**
+     * Ajoute un panneau pour un article dans les détails de la commande.
+     *
+     * @param article : l'article concerné
+     * @param quantite : la quantité commandée
+     */
     private void ajouterArticlePanel(Article article, int quantite) {
         JPanel articlePanel = new JPanel(new BorderLayout());
         articlePanel.setBackground(Color.WHITE);
@@ -350,7 +382,9 @@ public class inventaireVue extends JFrame {
     }
 
 
-
+    /**
+     * Ouvre la fenêtre pour ajouter une nouvelle commande.
+     */
     public void ajouterCommande() {
         JDialog dialog = new JDialog((Frame) null, "Nouvelle Commande", true);
         dialog.setSize(700, 600);
@@ -550,7 +584,9 @@ public class inventaireVue extends JFrame {
 
 
 
-
+    /**
+     * Permet de modifier une commande existante.
+     */
     private void modifierCommande() {
         int row = tableCommandes.getSelectedRow();
         //on affiche un message si aucune commande n'a été sélectionnée par l'administrateur
@@ -767,6 +803,9 @@ public class inventaireVue extends JFrame {
         }
     }
 
+    /**
+     * Permet de supprimer une commande sélectionnée.
+     */
     private void supprimerCommande() {
         int row = tableCommandes.getSelectedRow();
         if (row == -1) {

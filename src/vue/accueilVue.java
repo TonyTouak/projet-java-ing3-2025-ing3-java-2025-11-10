@@ -8,7 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class accueilVue extends JFrame {
-
+    /**
+     * La fonction initialise la fenêtre d'accueil avec les composants graphiques.
+     *
+     * @param client : le client actuellement connecté à l'application.
+     */
     public accueilVue(Client client) {
         setTitle("Accueil - ShopTopie");
         setSize(1000, 700);
