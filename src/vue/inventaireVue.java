@@ -389,7 +389,7 @@ public class inventaireVue extends JFrame {
 
             JLabel nomLabel = new JLabel(article.getNom() + " (Stock: " + article.getQuantite() + ")");
             nomLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            nomLabel.setPreferredSize(new Dimension(200, 30));
+            nomLabel.setPreferredSize(new Dimension(300, 30));
             ligneArticle.add(nomLabel);
 
             ligneArticle.add(new JLabel("Quantité:"));
@@ -611,7 +611,7 @@ public class inventaireVue extends JFrame {
 
                     JLabel stockLabel = new JLabel(article.getNom() + " (Stock: " + article.getQuantite() + ")");
                     stockLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-                    stockLabel.setPreferredSize(new Dimension(200, 30));
+                    stockLabel.setPreferredSize(new Dimension(250, 30));
                     lignePanel.add(stockLabel);
 
                     lignePanel.add(new JLabel("Quantité:"));

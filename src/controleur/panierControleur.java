@@ -60,7 +60,6 @@ public class panierControleur {
 
 
 
-        // La vue gère déjà la création du contrôleur en interne
         vuePaiement.setVisible(true);
     }
 
@@ -82,6 +81,11 @@ public class panierControleur {
         panier.supprimerArticle(article);
         mettreAJourVue();
     }
+
+    public int getQuantiteArticle(Article article) {
+        return panier.getQuantite(article);
+    }
+
 
     public void viderPanier() {
         panier.vider();

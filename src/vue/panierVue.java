@@ -26,7 +26,7 @@ public class panierVue extends JFrame {
         menuVue menu = new menuVue(client, this);
         setJMenuBar(menu.creerMenuBar());
 
-        JPanel header = configurerHeader();
+        JPanel header = Header();
         add(header, BorderLayout.NORTH);
 
         articlesPanel = new JPanel();
@@ -35,13 +35,13 @@ public class panierVue extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollPane, BorderLayout.CENTER);
 
-        add(configurerBoutons(), BorderLayout.SOUTH);
+        add(Boutons(), BorderLayout.SOUTH);
 
         actualiserAffichage();
         setVisible(true);
     }
 
-    private JPanel configurerHeader() {
+    private JPanel Header() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(50, 205, 50));
         header.setPreferredSize(new Dimension(0, 80));
@@ -59,7 +59,7 @@ public class panierVue extends JFrame {
         return header;
     }
 
-    private JPanel configurerBoutons() {
+    private JPanel Boutons() {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         buttonsPanel.setBackground(Color.WHITE);
 
@@ -98,11 +98,11 @@ public class panierVue extends JFrame {
 
     private void afficherArticles() {
         for (Map.Entry<Article, Integer> entry : controleur.getArticlesPanier().entrySet()) {
-            articlesPanel.add(creerArticlePanel(entry.getKey(), entry.getValue()));
+            articlesPanel.add(articlePanel(entry.getKey(), entry.getValue()));
         }
     }
 
-    private JPanel creerArticlePanel(Article article, int quantite) {
+    private JPanel articlePanel(Article article, int quantite) {
         JPanel itemPanel = new JPanel(new BorderLayout(10, 10));
         itemPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY),
@@ -111,22 +111,22 @@ public class panierVue extends JFrame {
         itemPanel.setBackground(Color.WHITE);
         itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
-        itemPanel.add(creerImageLabel(article), BorderLayout.WEST);
+        itemPanel.add(composantImage(article), BorderLayout.WEST);
 
-        itemPanel.add(creerDetailsPanel(article, quantite), BorderLayout.CENTER);
+        itemPanel.add(Details(article, quantite), BorderLayout.CENTER);
 
-        itemPanel.add(creerSupprimerButton(article), BorderLayout.EAST);
+        itemPanel.add(boutonSuppression(article), BorderLayout.EAST);
 
         return itemPanel;
     }
 
-    private JLabel creerImageLabel(Article article) {
+    private JLabel composantImage(Article article) {
         ImageIcon originalIcon = new ImageIcon("images/" + article.getImage());
         Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         return new JLabel(new ImageIcon(scaledImage));
     }
 
-    private JPanel creerDetailsPanel(Article article, int quantite) {
+    private JPanel Details(Article article, int quantite) {
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setBackground(Color.WHITE);
@@ -135,40 +135,55 @@ public class panierVue extends JFrame {
         nomLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         detailsPanel.add(nomLabel);
 
-        JLabel prixLabel = new JLabel(String.format("Prix unitaire: %.2f €", article.getPrixUnique()));
+        JLabel prixLabel = new JLabel();
         prixLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         detailsPanel.add(prixLabel);
 
-        JLabel stockLabel = new JLabel("Stock disponible: " + article.getQuantite());
+        JLabel stockLabel = new JLabel();
         stockLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         detailsPanel.add(stockLabel);
 
-        detailsPanel.add(creerQuantitePanel(article, quantite));
+        mettreAJourLabels(article, quantite, prixLabel, stockLabel);
+
+        detailsPanel.add(Quantite(article, quantite, prixLabel, stockLabel));
 
         return detailsPanel;
     }
 
-    private JPanel creerQuantitePanel(Article article, int quantite) {
+
+    private JPanel Quantite(Article article, int quantite, JLabel prixLabel, JLabel stockLabel) {
         JPanel quantitePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         quantitePanel.setBackground(Color.WHITE);
-
-        JButton moinsButton = new JButton("-");
-        moinsButton.addActionListener(e -> controleur.modifierQuantite(article, -1));
-        quantitePanel.add(moinsButton);
 
         JLabel quantiteLabel = new JLabel(String.valueOf(quantite));
         quantiteLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         quantiteLabel.setPreferredSize(new Dimension(30, 20));
+
+        JButton moinsButton = new JButton("-");
+        moinsButton.addActionListener(e -> {
+            controleur.modifierQuantite(article, -1);
+            quantiteLabel.setText(String.valueOf(controleur.getQuantiteArticle(article)));
+            mettreAJourLabels(article, controleur.getQuantiteArticle(article), prixLabel, stockLabel);
+            actualiserTotal();
+        });
+        quantitePanel.add(moinsButton);
+
         quantitePanel.add(quantiteLabel);
 
         JButton plusButton = new JButton("+");
-        plusButton.addActionListener(e -> controleur.modifierQuantite(article, 1));
+        plusButton.addActionListener(e -> {
+            controleur.modifierQuantite(article, 1);
+            quantiteLabel.setText(String.valueOf(controleur.getQuantiteArticle(article)));
+            mettreAJourLabels(article, controleur.getQuantiteArticle(article), prixLabel, stockLabel);
+            actualiserTotal();
+        });
         quantitePanel.add(plusButton);
 
         return quantitePanel;
     }
 
-    private JButton creerSupprimerButton(Article article) {
+
+    private JButton boutonSuppression(Article article) {
         JButton supprimerButton = new JButton("Supprimer");
         supprimerButton.addActionListener(e -> controleur.supprimerArticle(article));
         return supprimerButton;
@@ -197,6 +212,13 @@ public class panierVue extends JFrame {
         articlesPanel.revalidate();
         articlesPanel.repaint();
     }
+
+    //on let à jour les quantités et prix en fonction de ce qui est ajouté/supprimé via la vue du panier
+    private void mettreAJourLabels(Article article, int quantite, JLabel prixLabel, JLabel stockLabel) {
+        prixLabel.setText(String.format("Prix: %.2f €", article.calculerPrix(quantite)));
+        stockLabel.setText("Stock disponible: " + (article.getQuantite() - quantite));
+    }
+
 
     public void afficherErreur(String message) {
         JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.ERROR_MESSAGE);
