@@ -10,6 +10,16 @@ public class Paiement {
     private int idClient;
     private float solde;
 
+    /**
+     * Constructeur d'une carte de paiement non associée à un client.
+     *
+     * @param nomCarte Le nom associé à la carte.
+     * @param numero Le numéro de la carte bancaire.
+     * @param dateValidite La date de validité de la carte.
+     * @param cvv Le code de sécurité de la carte.
+     * @param solde Le solde disponible sur la carte.
+     */
+
     public Paiement(String nomCarte, int numero, Date dateValidite,
                     int cvv, float solde) {
         this.nomCarte = nomCarte;
@@ -18,6 +28,17 @@ public class Paiement {
         this.cvv = cvv;
         this.solde = solde;
     }
+
+    /**
+     * Constructeur d'une carte de paiement associée à un client.
+     *
+     * @param nomCarte Le nom associé à la carte.
+     * @param numero Le numéro de la carte bancaire.
+     * @param dateValidite La date de validité de la carte.
+     * @param cvv Le code de sécurité de la carte.
+     * @param ID_Client L'identifiant du client auquel la carte est liée.
+     * @param solde Le solde disponible sur la carte.
+     */
 
     public Paiement(String nomCarte, int numero, Date dateValidite,
                     int cvv, int ID_Client, float solde) {

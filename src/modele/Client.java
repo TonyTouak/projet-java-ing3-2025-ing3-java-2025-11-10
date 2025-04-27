@@ -10,6 +10,19 @@ public class Client extends Utilisateur {
     protected String telephone;
     private List<Commande> commandes;
 
+    /**
+     * Constructeur d'un Client.
+     *
+     * Initialise un client avec ses informations personnelles et prépare la liste de ses commandes.
+     *
+     * @param id L'identifiant utilisateur associé.
+     * @param nom Le nom du client.
+     * @param email L'email du client.
+     * @param motDePasse Le mot de passe du client.
+     * @param IDClient L'identifiant spécifique au client dans la base de données.
+     * @param adresse L'adresse postale du client.
+     * @param telephone Le numéro de téléphone du client.
+     */
 
     public Client(int id, String nom, String email, String motDePasse,int IDClient,
                   String adresse, String telephone) {

@@ -20,6 +20,21 @@ public class adminControleur implements ActionListener {
     private articleCommandeDaoImpl articleCommandeDao;
     private Administrateur admin;
 
+    /**
+     * Constructeur du contrôleur d'administration.
+     *
+     * Initialise le contrôleur avec la vue admin et les différents DAO nécessaires à la gestion
+     * des articles, clients, statistiques et commandes.
+     *
+     * @param vue La vue de l'administrateur.
+     * @param articleDao Le DAO pour gérer les articles.
+     * @param clientDao Le DAO pour gérer les clients.
+     * @param statDao Le DAO pour gérer les statistiques.
+     * @param commandeDao Le DAO pour gérer les commandes.
+     * @param articleCommandeDao Le DAO pour gérer les relations article-commande.
+     * @param admin L'administrateur actuellement connecté.
+     */
+
     public adminControleur(adminVue vue, articleDaoImpl articleDao, clientDaoImpl clientDao, statistiqueDaoImpl statDao, commandeDaoImpl commandeDao, articleCommandeDaoImpl articleCommandeDao, Administrateur admin) {
         this.vue = vue;
         this.articleDao = articleDao;
@@ -31,6 +46,9 @@ public class adminControleur implements ActionListener {
         initControl();
     }
 
+    /**
+     * Initialise les contrôleurs d'événements pour les boutons de la vue administrateur.
+     */
     private void initControl() {
         vue.getBtnInventaire().addActionListener(this);
         vue.getBtnPromotions().addActionListener(this);
@@ -39,13 +57,18 @@ public class adminControleur implements ActionListener {
         vue.getBtnDeconnexion().addActionListener(this);
     }
 
-    //on affiche la vue adéquate en fonction du choix de l'admin
+    /**
+     * Réagit aux actions de l'administrateur sur les différents boutons,
+     * et ouvre la vue correspondante selon le bouton cliqué.
+     *
+     * @param e événement déclenché par l'action utilisateur
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton source = (JButton) e.getSource();
 
         if (source == vue.getBtnInventaire()) {
-            new inventaireVue(articleDao,commandeDao,articleCommandeDao);
+            new inventaireVue(articleDao, commandeDao, articleCommandeDao);
         } else if (source == vue.getBtnPromotions()) {
             List<Article> articles = articleDao.getAll();
             new promotionVue(articles, articleDao);

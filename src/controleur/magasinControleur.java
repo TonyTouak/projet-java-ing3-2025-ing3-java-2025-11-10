@@ -14,6 +14,17 @@ public class magasinControleur {
     private ArrayList<Article> articles;
     private String sexe;
 
+    /**
+     * Constructeur du contrôleur de magasin.
+     *
+     * Initialise le contrôleur avec la vue du magasin, le DAO des articles et le sexe des articles affichés.
+     * Charge les 18 premiers articles correspondant au sexe spécifié ("Homme" ou "Femme") pour l'affichage.
+     *
+     * @param vue La vue associée au magasin.
+     * @param dao Le DAO pour accéder aux articles en base de données.
+     * @param sexe Le sexe des articles à afficher ("Homme" ou "Femme").
+     */
+
     public magasinControleur(magasinVue vue, articleDaoImpl dao, String sexe) {
         this.vue = vue;
         this.dao = dao;
@@ -24,8 +35,16 @@ public class magasinControleur {
         //on affiche 18 articles par page
     }
 
+    /**
+     * Applique des filtres sur la liste des articles selon le type, la marque, le prix maximum et la présence d'une réduction,
+     * puis met à jour l'affichage avec les articles filtrés.
+     *
+     * @param type      type d'article sélectionné
+     * @param marque    marque sélectionnée
+     * @param prixMax   prix maximum autorisé
+     * @param reduction type de réduction ("Toutes", "Avec réduction", "Sans réduction")
+     */
     public void appliquerFiltres(String type, String marque, int prixMax, String reduction) {
-        //on utilise java Stream pour le filtrage
         ArrayList<Article> filtres = (ArrayList<Article>) articles.stream()
                 .filter(a -> type.equals("Tous") || a.getType().equalsIgnoreCase(type))
                 .filter(a -> marque.equals("Toutes") || a.getMarque().equalsIgnoreCase(marque))
@@ -41,10 +60,17 @@ public class magasinControleur {
         vue.afficherArticles(filtres);
     }
 
+
     public ArrayList<Article> getArticles() {
         return articles;
     }
 
+    /**
+     * Applique une recherche d'articles par mot-clé sur leur nom,
+     * en filtrant également selon le sexe sélectionné, puis met à jour l'affichage.
+     *
+     * @param motCle mot-clé saisi pour la recherche
+     */
     public void appliquerRecherche(String motCle) {
         ArrayList<Article> resultats = new ArrayList<>();
         for (Article article : dao.getAll()) {
