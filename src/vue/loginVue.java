@@ -91,11 +91,19 @@ public class loginVue extends JFrame {
         } else {
             Administrateur admin = new administrateurDaoImpl(daoFactory).chercher(utilisateur.getId());
             if (admin != null) {
-                new adminVue(admin);
+                articleDaoImpl articleDao = new articleDaoImpl(daoFactory);
+                clientDaoImpl clientDao = new clientDaoImpl(daoFactory);
+                statistiqueDaoImpl statDao = new statistiqueDaoImpl(daoFactory);
+                commandeDaoImpl commandeDao = new commandeDaoImpl(daoFactory);
+                articleCommandeDaoImpl articleCommandeDao = new articleCommandeDaoImpl(daoFactory);
+
+
+                new adminVue(admin, articleDao, clientDao, statDao, commandeDao, articleCommandeDao);
             } else {
                 JOptionPane.showMessageDialog(this, "Aucun rôle associé à cet utilisateur.");
             }
         }
         dispose();
     }
+
 }
