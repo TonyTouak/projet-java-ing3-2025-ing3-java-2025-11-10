@@ -327,7 +327,7 @@ public class articleVue extends JFrame {
     }
 
     /**
-     * Ajoute l'article sélectionné au panier en tenant compte du stock restant.
+     * Ajoute l'article sélectionné au panier en prenant en compte du stock restant.
      */
     //on envoie au panier l'article
     private void ajouterAuPanier() {

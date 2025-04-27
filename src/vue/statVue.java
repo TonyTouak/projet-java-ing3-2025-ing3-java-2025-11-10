@@ -97,7 +97,7 @@ public class statVue extends JFrame {
     }
 
     /**
-     * Crée un bandeau pour afficher un chiffre clé.
+     * Création d'un bandeau pour afficher un chiffre clé.
      *
      * @param title Titre du bandeau
      * @param value Valeur à afficher

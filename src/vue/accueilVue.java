@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 public class accueilVue extends JFrame {
     /**
-     * La fonction initialise la fenêtre d'accueil avec les composants graphiques.
+     * La fonction initialise la fenêtre d'accueil et les composants graphiques.
      *
      * @param client : le client actuellement connecté à l'application.
      */

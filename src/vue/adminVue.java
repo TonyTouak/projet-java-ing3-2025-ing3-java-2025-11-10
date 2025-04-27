@@ -12,7 +12,7 @@ public class adminVue extends JFrame {
     private JButton btnInventaire, btnPromotions, btnClients, btnStatistiques, btnDeconnexion;
 
     /**
-     * Initialise l'interface graphique de l'espace administrateur.
+     * Initialise l'interface graphique de l'espace admin.
      *
      * @param admin : l'administrateur connecté
      * @param articleDao : DAO pour la gestion des articles

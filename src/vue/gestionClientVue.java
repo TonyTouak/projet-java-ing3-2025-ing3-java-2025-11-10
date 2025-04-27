@@ -267,7 +267,7 @@ public class gestionClientVue extends JFrame {
     }
 
     /**
-     * Affiche un message d'information ou d'erreur.
+     * Affichage d'un message d'information ou d'erreur.
      *
      * @param message : le message à afficher
      * @param title : le titre de la boîte de dialogue

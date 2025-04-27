@@ -300,7 +300,7 @@ public class panierVue extends JFrame {
     }
 
     /**
-     * Affiche une erreur dans une boîte de dialogue.
+     * Affichage d'une erreur dans une boîte de dialogue.
      *
      * @param message : message d'erreur
      */

@@ -17,7 +17,7 @@ public class clientVue extends JFrame {
     private final Client client;
 
     /**
-     * Initialise l'espace client avec ses informations et ses commandes.
+     * Initialisation de l'espace client avec ses informations et ses commandes.
      *
      * @param client : le client connecté
      */

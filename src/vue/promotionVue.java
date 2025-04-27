@@ -19,7 +19,7 @@ public class promotionVue extends JFrame {
      * Constructeur de promotionVue.
      *
      * @param articles : liste des articles à afficher
-     * @param articleDao : DAO pour manipuler les articles
+     * @param articleDao : DAO pour manipuler des articles
      */
     public promotionVue(List<Article> articles, articleDao articleDao) {
         this.articleDao = articleDao;

@@ -13,7 +13,7 @@ public class loginVue extends JFrame {
     private final utilisateurDao utilisateurDao;
 
     /**
-     * Initialise l'interface de connexion des utilisateurs.
+     * Initialisation de l'interface de connexion des utilisateurs.
      */
     public loginVue() {
         setTitle("Bienvenue sur ShopTopie");

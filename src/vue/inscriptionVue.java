@@ -16,7 +16,7 @@ public class inscriptionVue extends JFrame {
     private JButton validerButton;
 
     /**
-     * Initialise l'interface de création de compte client.
+     * Initialise l'interface de création d'un compte client.
      */
     public inscriptionVue() {
         setTitle("Inscription");

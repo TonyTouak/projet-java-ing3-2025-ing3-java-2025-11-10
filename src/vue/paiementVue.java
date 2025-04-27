@@ -215,7 +215,7 @@ public class paiementVue extends JFrame {
     }
 
     /**
-     * Affiche une confirmation lorsque le paiement est réussi et ferme la fenêtre.
+     * Affiche une confirmation quand le paiement est réussi et ferme la fenêtre.
      */
     public void paiementReussi() {
         JOptionPane.showMessageDialog(this, "Paiement effectué avec succès !");

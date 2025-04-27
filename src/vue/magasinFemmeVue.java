@@ -283,7 +283,7 @@ public class magasinFemmeVue extends JFrame implements magasinVue {
     }
 
     /**
-     * Crée le panneau pour afficher un article spécifique.
+     * Création du panneau pour afficher un article spécifique.
      *
      * @param article : l'article à afficher
      * @return : JPanel représentant l'article

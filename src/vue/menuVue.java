@@ -132,7 +132,7 @@ public class menuVue {
     }
 
     /**
-     * Crée un bouton de menu avec effet de survol et action au clic.
+     * Création d'un menu avec effet de survol et action au clic.
      *
      * @param texte : texte du bouton
      * @param font : police du texte

@@ -256,7 +256,7 @@ public class inventaireVue extends JFrame {
     }
 
     /**
-     * Affiche les détails d'une commande sélectionnée.
+     * Affiche les détails de la commande sélectionnée.
      */
     private void afficherDetailsCommande() {
         for (int i = panelDetails.getComponentCount() - 1; i >= 1; i--) {
